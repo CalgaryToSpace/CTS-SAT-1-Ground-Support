@@ -4,7 +4,7 @@ import json
 import re
 from pathlib import Path
 
-from cts1_ground_support.paths import get_repo_path, read_text_file
+from cts1_ground_support.paths import read_text_file
 from cts1_ground_support.telecommand_types import TelecommandDefinition
 
 
@@ -79,14 +79,10 @@ def parse_telecommand_array_table(c_code: str | Path) -> list[TelecommandDefinit
     for struct_declaration in re.finditer(struct_body_regex, all_struct_declarations):
         struct_body = struct_declaration.group("struct_body")
 
-        fields: dict[str, str | int] = {}
+        fields: dict[str, str] = {}
         for struct_match in struct_level_regex.finditer(struct_body):
             field_name = struct_match.group("field_name")
             field_value = struct_match.group("field_value").strip().strip('"')
-
-            # Convert int field(s) to int
-            if field_name in ["number_of_args"]:
-                field_value = int(field_value)
 
             fields[field_name] = field_value
 
@@ -94,7 +90,7 @@ def parse_telecommand_array_table(c_code: str | Path) -> list[TelecommandDefinit
             TelecommandDefinition(
                 name=fields["tcmd_name"],
                 tcmd_func=fields["tcmd_func"],
-                number_of_args=fields["number_of_args"],
+                number_of_args=int(fields["number_of_args"]),
                 readiness_level=fields["readiness_level"],
             ),
         )
@@ -147,7 +143,7 @@ def extract_c_function_docstring(function_name: str, c_code: str) -> str | None:
     return None
 
 
-def extract_telecommand_arg_list(docstring: str) -> list[str]:
+def extract_telecommand_arg_list(docstring: str) -> list[str] | None:
     """Extract the list of argument descriptions from a telecommand docstring.
 
     Args:
@@ -203,7 +199,7 @@ def extract_telecommand_arg_list(docstring: str) -> list[str]:
     return matches
 
 
-def parse_telecommand_list_from_repo(repo_path: Path | None = None) -> list[TelecommandDefinition]:
+def parse_telecommand_list_from_repo(repo_path: Path) -> list[TelecommandDefinition]:
     """Read the list of telecommands array table and extract docstrings for each telecommand.
 
     Args:
@@ -211,9 +207,6 @@ def parse_telecommand_list_from_repo(repo_path: Path | None = None) -> list[Tele
         repo_path: The path to the root of the repository. If None, the path is set automatically.
 
     """
-    if repo_path is None:
-        repo_path = get_repo_path()
-
     # Assert that the input is a Path object.
     if not isinstance(repo_path, Path):
         msg = f"Expected a Path object, but got {type(repo_path)}"
@@ -252,5 +245,5 @@ def parse_telecommand_list_from_repo(repo_path: Path | None = None) -> list[Tele
 
 if __name__ == "__main__":
     # Do a demo of the `parse_telecommand_array_table` function
-    telecommands = parse_telecommand_list_from_repo()
+    telecommands = parse_telecommand_list_from_repo(Path(input("Path to repo: ")))
     print(json.dumps([tcmd.to_dict() for tcmd in telecommands], indent=2))  # noqa: T201

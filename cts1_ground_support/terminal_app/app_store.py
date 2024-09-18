@@ -2,6 +2,7 @@
 
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from cts1_ground_support.terminal_app.app_types import UART_PORT_NAME_DISCONNECTED, RxTxLogEntry
 
@@ -9,6 +10,8 @@ from cts1_ground_support.terminal_app.app_types import UART_PORT_NAME_DISCONNECT
 @dataclass
 class AppStore:
     """A singleton class to store the app's state (across all clients)."""
+
+    firmware_repo_path: Path | None = None
 
     uart_port_name: str = UART_PORT_NAME_DISCONNECTED
     rxtx_log: list[RxTxLogEntry] = field(

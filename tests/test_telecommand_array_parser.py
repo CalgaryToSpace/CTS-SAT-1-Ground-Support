@@ -1,7 +1,11 @@
 """Unit tests for the `telecommand_array_parser.py` module."""
 
+import tempfile
+from pathlib import Path
+
 import pytest
 
+from cts1_ground_support.paths import clone_firmware_repo
 from cts1_ground_support.telecommand_array_parser import (
     extract_c_function_docstring,
     extract_telecommand_arg_list,
@@ -190,7 +194,10 @@ def test_extract_telecommand_arg_list() -> None:
 
 def test_parse_telecommand_list_from_repo() -> None:
     """Test the `parse_telecommand_list_from_repo` function with the real file in this repo."""
-    telecommands = parse_telecommand_list_from_repo()
+    # TODO: Consider adding a local tiny copy of the relevant files from the repo instead.
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        repo_path, _repo = clone_firmware_repo(Path(tmp_dir))
+        telecommands = parse_telecommand_list_from_repo(repo_path)
 
     assert isinstance(telecommands, list)
     assert len(telecommands) > 5
@@ -204,6 +211,7 @@ def test_parse_telecommand_list_from_repo() -> None:
     assert hello_world_telecommand.name == "hello_world"
     assert hello_world_telecommand.tcmd_func == "TCMDEXEC_hello_world"
     assert hello_world_telecommand.number_of_args == 0
+    assert hello_world_telecommand.full_docstring is not None
     assert hello_world_telecommand.full_docstring.startswith("@brief ")
     assert hello_world_telecommand.argument_descriptions == []
 
@@ -216,6 +224,7 @@ def test_parse_telecommand_list_from_repo() -> None:
     assert read_file_telecommand.name == "fs_read_file_hex"
     assert read_file_telecommand.tcmd_func == "TCMDEXEC_fs_read_file_hex"
     assert read_file_telecommand.number_of_args == 1
+    assert read_file_telecommand.full_docstring is not None
     assert read_file_telecommand.full_docstring.startswith("@brief ")
     assert read_file_telecommand.argument_descriptions == [
         "File path as string",
@@ -230,6 +239,7 @@ def test_parse_telecommand_list_from_repo() -> None:
     assert read_file_telecommand.name == "fs_write_file"
     assert read_file_telecommand.tcmd_func == "TCMDEXEC_fs_write_file"
     assert read_file_telecommand.number_of_args == 2
+    assert read_file_telecommand.full_docstring is not None
     assert read_file_telecommand.full_docstring.startswith("@brief ")
     assert read_file_telecommand.argument_descriptions == [
         "File path as string",

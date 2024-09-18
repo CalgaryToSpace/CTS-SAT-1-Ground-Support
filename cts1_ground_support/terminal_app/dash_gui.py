@@ -10,7 +10,9 @@ The main screen has the following components:
 import argparse
 import functools
 import json
+import tempfile
 import time
+from pathlib import Path
 
 import dash
 import dash_bootstrap_components as dbc
@@ -19,6 +21,7 @@ from dash import callback, dcc, html
 from dash.dependencies import Input, Output, State
 from loguru import logger
 
+from cts1_ground_support.paths import clone_firmware_repo
 from cts1_ground_support.serial import list_serial_ports
 from cts1_ground_support.telecommand_array_parser import parse_telecommand_list_from_repo
 from cts1_ground_support.telecommand_preview import generate_telecommand_preview
@@ -38,7 +41,11 @@ UART_PORT_OPTION_LABEL_DISCONNECTED = "⛔ Disconnected ⛔"
 @functools.lru_cache  # cache forever is fine
 def get_telecommand_list_from_repo_cached() -> list[TelecommandDefinition]:
     """Get the telecommand list from the repo, and cache the result."""
-    return parse_telecommand_list_from_repo()
+    if app_store.firmware_repo_path is None:
+        # TODO: Maybe raise here?
+        return []
+
+    return parse_telecommand_list_from_repo(app_store.firmware_repo_path)
 
 
 def get_telecommand_name_list() -> list[str]:
@@ -60,6 +67,10 @@ def get_telecommand_by_name(name: str) -> TelecommandDefinition:
 def get_max_arguments_per_telecommand() -> int:
     """Get the maximum number of arguments for any telecommand."""
     telecommands = get_telecommand_list_from_repo_cached()
+
+    if len(telecommands) == 0:
+        return 0
+
     return max(tcmd.number_of_args for tcmd in telecommands)
 
 
@@ -146,8 +157,8 @@ def update_stored_command_preview(
     tsexec_suffix_tag: str | None,
     extra_suffix_tags_input: str,
     _n_intervals: int,
-    *every_arg_value: tuple[str],
-) -> list:
+    *every_arg_value: str,
+) -> str:
     """When any input to the command preview changes, regenerate the command preview.
 
     Stores the command preview so that it's accessible from any function which wants it.
@@ -260,7 +271,9 @@ def clear_log_button_callback(n_clicks: int) -> None:
     Input("uart-port-dropdown", "value"),
     Input("uart-port-dropdown-interval-component", "n_intervals"),
 )
-def update_uart_port_dropdown_options(uart_port_name: str | None, _n_intervals: int) -> list[str]:
+def update_uart_port_dropdown_options(
+    uart_port_name: str | None, _n_intervals: int
+) -> list[dict[str, str]]:
     """Update the UART port dropdown with the available serial ports."""
     if uart_port_name is None:
         uart_port_name = UART_PORT_NAME_DISCONNECTED
@@ -364,7 +377,7 @@ def update_uart_log_interval(
     _n_clicks_clear_logs: int,
     _update_interval_count: int,
     display_options_checklist: list[str] | None,
-) -> html.Div:
+) -> tuple[html.Div, int]:
     """Update the UART log at the specified interval. Also, update the refresh interval."""
     sec_since_send = time.time() - app_store.last_tx_timestamp_sec
     if sec_since_send < 10:  # noqa: PLR2004
@@ -385,7 +398,7 @@ def update_uart_log_interval(
         show_timestamp = False
 
     return (
-        # new log entries
+        # New log entries
         generate_rx_tx_log(
             show_end_of_line_chars=show_end_of_line_chars, show_timestamp=show_timestamp
         ),
@@ -538,7 +551,7 @@ def run_dash_app(*, enable_debug: bool = False, enable_advanced: bool = False) -
         update_title=(
             # Disable the update title, unless we're debugging.
             # Makes it look cleaner overall.
-            "Updating..." if enable_debug else None
+            "Updating..." if enable_debug else ""
         ),
     )
 
@@ -607,6 +620,17 @@ def main() -> None:
     """Run the main server, with optional debug mode (via CLI arg)."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "-r",
+        "--repo",
+        "--firmware-repo",
+        dest="firmware_repo",
+        type=str,
+        help=(
+            "Path to the root of the CTS-SAT-1-OBC-Firmware repository, for reading telecommand list."
+            " If not provided, the repo will automatically be cloned to a temporary directory."
+        ),
+    )
+    parser.add_argument(
         "-d",
         "--debug",
         action="store_true",
@@ -619,7 +643,29 @@ def main() -> None:
         help="Enable advanced features for ground debugging, like the extra suffix tags input.",
     )
     args = parser.parse_args()
-    run_dash_app(enable_debug=args.debug, enable_advanced=args.advanced)
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        if args.firmware_repo is None:
+            firmware_repo_path, repo = clone_firmware_repo(Path(tmp_dir))
+            logger.info(
+                "Cloned CTS-SAT-1-OBC-Firmware repo to temporary directory "
+                f"(commit={repo.head.commit.hexsha[0:7]}): {tmp_dir}"
+            )
+        else:
+            firmware_repo_path = Path(args.firmware_repo)
+
+            if not firmware_repo_path.is_dir():
+                msg = f"Provided CTS-SAT-1-OBC-Firmware repo not found: {args.firmware_repo}"
+                raise FileNotFoundError(msg)
+
+            logger.info(f"Using provided CTS-SAT-1-OBC-Firmware repo: {args.firmware_repo}")
+
+        app_store.firmware_repo_path = firmware_repo_path
+
+        run_dash_app(
+            enable_debug=args.debug,
+            enable_advanced=args.advanced,
+        )
 
 
 if __name__ == "__main__":
