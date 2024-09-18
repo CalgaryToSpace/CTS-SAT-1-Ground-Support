@@ -39,6 +39,7 @@ dev = [
   "hatchling",
   "ruff",
   "coverage", # For CI.
+  "pyright", # For type checking.
 ]
 
 [project.urls]
