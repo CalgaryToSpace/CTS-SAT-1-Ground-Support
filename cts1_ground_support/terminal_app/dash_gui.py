@@ -26,6 +26,7 @@ from cts1_ground_support.serial import list_serial_ports
 from cts1_ground_support.telecommand_array_parser import parse_telecommand_list_from_repo
 from cts1_ground_support.telecommand_preview import generate_telecommand_preview
 from cts1_ground_support.telecommand_types import TelecommandDefinition
+from cts1_ground_support.terminal_app.app_config import MAX_ARGS_PER_TELECOMMAND
 from cts1_ground_support.terminal_app.app_store import app_store
 from cts1_ground_support.terminal_app.app_types import UART_PORT_NAME_DISCONNECTED, RxTxLogEntry
 from cts1_ground_support.terminal_app.serial_thread import start_uart_listener
@@ -69,16 +70,6 @@ def get_telecommand_by_name(name: str) -> TelecommandDefinition:
     return telecommand
 
 
-def get_max_arguments_per_telecommand() -> int:
-    """Get the maximum number of arguments for any telecommand."""
-    telecommands = get_telecommand_list_from_repo()
-
-    if len(telecommands) == 0:
-        return 0
-
-    return max(tcmd.number_of_args for tcmd in telecommands)
-
-
 @callback(
     Output("argument-inputs-container", "children"),
     Input("telecommand-dropdown", "value"),
@@ -88,7 +79,7 @@ def update_argument_inputs(selected_command_name: str) -> list[html.Div]:
     selected_tcmd = get_telecommand_by_name(selected_command_name)
 
     arg_inputs = []
-    for arg_num in range(get_max_arguments_per_telecommand()):
+    for arg_num in range(MAX_ARGS_PER_TELECOMMAND):
         if (selected_tcmd.argument_descriptions is not None) and (
             arg_num < len(selected_tcmd.argument_descriptions)
         ):
@@ -150,10 +141,7 @@ def handle_uart_port_change(uart_port_name: str) -> None:
     Input("extra-suffix-tags-input", "value"),  # Advanced feature for debugging
     Input("uart-update-interval-component", "n_intervals"),
     # TODO: maybe this could be cleaner with `Input/State("argument-inputs-container", "children")`
-    *[
-        Input(f"arg-input-{arg_num}", "value")
-        for arg_num in range(get_max_arguments_per_telecommand())
-    ],
+    *[Input(f"arg-input-{arg_num}", "value") for arg_num in range(MAX_ARGS_PER_TELECOMMAND)],
     prevent_initial_call=True,  # Objects aren't created yet, so errors are thrown.
 )
 def update_stored_command_preview(
@@ -221,10 +209,7 @@ def update_command_preview_render(command_preview: str) -> list:
     State("telecommand-dropdown", "value"),
     State("stored-command-preview", "data"),
     # TODO: maybe this could be cleaner with `Input/State("argument-inputs-container", "children")`
-    *[
-        State(f"arg-input-{arg_num}", "value")
-        for arg_num in range(get_max_arguments_per_telecommand())
-    ],
+    *[State(f"arg-input-{arg_num}", "value") for arg_num in range(MAX_ARGS_PER_TELECOMMAND)],
     prevent_initial_call=True,
 )
 def send_button_callback(
