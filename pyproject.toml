@@ -39,6 +39,7 @@ dev = [
   "hatchling",
   "ruff",
   "coverage", # For CI.
+  "pyright", # For type checking.
 ]
 
 [project.urls]
@@ -56,7 +57,11 @@ line-length = 99
 [tool.ruff.lint]
 select = ["ALL"]
 # ignore = ["FIX002"]
-ignore = ["TD002", "TD003", "FIX002", "COM812"]
+ignore = [
+  "TD002", "TD003", "FIX002", "COM812",
+  "D203", # Disable "one-blank-line-before-class" (conflicts with other option)
+  "D213", # Disable "multi-line-summary-second-line" (conflicts with other option)
+]
 
 [tool.ruff.lint.per-file-ignores]
 # Source: https://github.com/astral-sh/ruff/issues/4368
