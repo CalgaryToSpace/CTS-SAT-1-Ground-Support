@@ -227,7 +227,7 @@ def parse_telecommand_list_from_repo(repo_path: Path) -> list[TelecommandDefinit
 
     # Read the files which may contain the TCMDEXEC functions.
     c_files_concat: str = "\n".join(
-        read_text_file(f) for f in repo_path.glob("firmware/Core/Src/**/*.c")
+        read_text_file(f) for f in repo_path.glob("firmware/Core/Src/**/*tele*.c")
     )
 
     # Extract the docstrings for each telecommand.
