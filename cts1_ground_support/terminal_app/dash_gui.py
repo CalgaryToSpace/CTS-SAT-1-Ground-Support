@@ -354,10 +354,7 @@ def generate_rx_tx_log(
                 entry.to_string(
                     show_end_of_line_chars=show_end_of_line_chars, show_timestamp=show_timestamp
                 ),
-                style=(
-                    entry.css_style
-                    | {"margin": "0", "lineHeight": "1.1", "whiteSpace": "pre-wrap"}
-                ),
+                style=(entry.css_style | {"margin": "0", "lineHeight": "1.1"}),
             )
             for entry in app_store.rxtx_log
         ],
@@ -587,12 +584,12 @@ def run_dash_app(*, enable_debug: bool = False, enable_advanced: bool = False) -
                             "backgroundColor": "black",
                             "height": "100%",
                             "overflowY": "auto",
-                            "overflowX": "auto",
+                            "overflowX": "auto",  # Not really used; pane2Style is main scroll bar.
                             # So that new messages appear at the bottom.
                             "flexDirection": "column-reverse",
                             "display": "flex",
                             # Make the horizontal scrollbar work correctly.
-                            "position": "absolute",  # "fixed" also helps
+                            "position": "absolute",
                         },
                     ),
                 ],
@@ -600,6 +597,11 @@ def run_dash_app(*, enable_debug: bool = False, enable_advanced: bool = False) -
                 split="vertical",
                 size=500,  # Default starting size.
                 minSize=300,
+                # Fill the space to the right side of the log black before receiving data.
+                pane2Style={
+                    "backgroundColor": "black",
+                    "overflowX": "auto",
+                },
             ),
             dbc.Button(
                 "Jump to Bottom ⬇️",
