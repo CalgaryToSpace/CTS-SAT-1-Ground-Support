@@ -137,7 +137,7 @@ def handle_uart_port_change(uart_port_name: str) -> None:
             msg = f"Serial port changed from {last_uart_port_name} to {uart_port_name}"
 
         logger.info(msg)
-        app_store.rxtx_log.append(RxTxLogEntry(msg.encode(), "notice"))
+        app_store.append_to_rxtx_log(RxTxLogEntry(msg.encode(), "notice"))
 
     app_store.uart_port_name = uart_port_name
 
@@ -236,7 +236,7 @@ def send_button_callback(
     if selected_command_name is None:
         msg = "No command selected. Can't send a command!"
         logger.error(msg)
-        app_store.rxtx_log.append(RxTxLogEntry(msg.encode(), "error"))
+        app_store.append_to_rxtx_log(RxTxLogEntry(msg.encode(), "error"))
         return
 
     args = [
@@ -246,13 +246,13 @@ def send_button_callback(
     if any(arg is None or arg == "" for arg in args):
         msg = f"Not all arguments are filled in. Can't run {selected_command_name}{args}!"
         logger.error(msg)
-        app_store.rxtx_log.append(RxTxLogEntry(msg.encode(), "error"))
+        app_store.append_to_rxtx_log(RxTxLogEntry(msg.encode(), "error"))
         return
 
     if app_store.uart_port_name == UART_PORT_NAME_DISCONNECTED:
         msg = "Can't send command when disconnected."
         logger.error(msg)
-        app_store.rxtx_log.append(RxTxLogEntry(msg.encode(), "error"))
+        app_store.append_to_rxtx_log(RxTxLogEntry(msg.encode(), "error"))
         return
 
     logger.info(f"Adding command to queue: {command_preview}")
@@ -268,7 +268,39 @@ def send_button_callback(
 def clear_log_button_callback(n_clicks: int) -> None:
     """Handle the "Clear Log" button click event by resetting the log."""
     logger.info(f"Clear Log button clicked ({n_clicks=})!")
-    app_store.rxtx_log = [RxTxLogEntry(b"Log Reset", "notice")].copy()
+
+    max_rxtx_log_index = max(app_store.rxtx_log.keys())
+    app_store.rxtx_log = {max_rxtx_log_index + 1: RxTxLogEntry(b"Log Reset", "notice")}.copy()
+
+
+@callback(
+    Output("stored-rxtx-log-pause-limits", "data"),
+    Output("pause-button", "children"),
+    Output("pause-button", "color"),
+    Input("pause-button", "n_clicks"),
+)
+def pause_button_callback(n_clicks: int) -> tuple[dict[str, int | bool], str, str]:
+    """Handle the pause button click event by toggling the pause button state."""
+    logger.info(f"Pause button clicked ({n_clicks=})!")
+
+    if n_clicks % 2 == 0:
+        # Running
+        return (
+            {"paused": False},
+            "Pause ⏸️",
+            "danger",
+        )
+
+    # Paused
+    return (
+        {
+            "paused": True,
+            "pause_min_idx": next(iter(app_store.rxtx_log.keys())),
+            "pause_max_idx": max(app_store.rxtx_log.keys()),
+        },
+        "Resume ▶️",
+        "success",
+    )
 
 
 @callback(
@@ -289,7 +321,7 @@ def update_uart_port_dropdown_options(
     if app_store.uart_port_name not in ([*port_name_list, UART_PORT_NAME_DISCONNECTED]):
         msg = f"Serial port is no longer available in list of ports: {app_store.uart_port_name}"
         logger.warning(msg)
-        app_store.rxtx_log.append(RxTxLogEntry(msg.encode(), "error"))
+        app_store.append_to_rxtx_log(RxTxLogEntry(msg.encode(), "error"))
         app_store.uart_port_name = UART_PORT_NAME_DISCONNECTED
 
     if app_store.uart_port_name != uart_port_name:
@@ -345,9 +377,18 @@ def update_selected_tcmd_info(selected_command_name: str) -> list:
 
 
 def generate_rx_tx_log(
-    *, show_end_of_line_chars: bool = False, show_timestamp: bool = False
+    *,
+    show_end_of_line_chars: bool = False,
+    show_timestamp: bool = False,
+    pause_min_idx: int | None = None,
+    pause_max_idx: int | None = None,
 ) -> html.Div:
     """Generate the RX/TX log, which shows the most recent received and transmitted messages."""
+    if pause_min_idx is None:
+        pause_min_idx = 0
+    if pause_max_idx is None:
+        pause_max_idx = 100_000_000_000_000  # Arbitrary large number.
+
     return html.Div(
         [
             html.Pre(
@@ -356,7 +397,8 @@ def generate_rx_tx_log(
                 ),
                 style=(entry.css_style | {"margin": "0", "lineHeight": "1.1"}),
             )
-            for entry in app_store.rxtx_log
+            for idx, entry in app_store.rxtx_log.items()
+            if (idx >= pause_min_idx) and (idx <= pause_max_idx)
         ],
         id="rx-tx-log",
         className="p-3",
@@ -376,6 +418,7 @@ def generate_rx_tx_log(
     Input("clear-log-button", "n_clicks"),
     Input("uart-update-interval-component", "n_intervals"),
     Input("display-options-checklist", "value"),
+    Input("stored-rxtx-log-pause-limits", "data"),
 )
 def update_uart_log_interval(
     _uart_port_name: str,
@@ -383,6 +426,7 @@ def update_uart_log_interval(
     _n_clicks_clear_logs: int,
     _update_interval_count: int,
     display_options_checklist: list[str] | None,
+    stored_rxtx_log_pause_limits: dict[str, int | bool],
 ) -> tuple[html.Div, int]:
     """Update the UART log at the specified interval. Also, update the refresh interval."""
     sec_since_send = time.time() - app_store.last_tx_timestamp_sec
@@ -404,9 +448,12 @@ def update_uart_log_interval(
         show_timestamp = False
 
     return (
-        # New log entries
+        # New log entries.
         generate_rx_tx_log(
-            show_end_of_line_chars=show_end_of_line_chars, show_timestamp=show_timestamp
+            show_end_of_line_chars=show_end_of_line_chars,
+            show_timestamp=show_timestamp,
+            pause_min_idx=stored_rxtx_log_pause_limits.get("pause_min_idx"),
+            pause_max_idx=stored_rxtx_log_pause_limits.get("pause_max_idx"),
         ),
         app_store.uart_log_refresh_rate_ms,  # new refresh interval
     )
@@ -516,7 +563,14 @@ def generate_left_pane(*, selected_command_name: str, enable_advanced: bool) -> 
                     n_clicks=0,
                     className="m-1 px-3",
                     style={"width": "auto"},
-                    color="danger",
+                    color="warning",
+                ),
+                dbc.Button(
+                    "Pause ⏯️",
+                    id="pause-button",
+                    n_clicks=0,
+                    className="m-1 px-3",
+                    style={"width": "auto"},
                 ),
                 dbc.Button(
                     "Send 📡",
@@ -621,8 +675,9 @@ def run_dash_app(*, enable_debug: bool = False, enable_advanced: bool = False) -
                 n_intervals=0,
             ),
             dcc.Store(id="stored-command-preview", data=""),
+            dcc.Store(id="stored-rxtx-log-pause-limits", data={"paused": False}.copy()),
         ],
-        fluid=True,  # Use a fluid container for full width
+        fluid=True,  # Use a fluid container for full width.
     )
 
     start_uart_listener()

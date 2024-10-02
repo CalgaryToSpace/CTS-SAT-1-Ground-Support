@@ -14,14 +14,21 @@ class AppStore:
     firmware_repo_path: Path | None = None
 
     uart_port_name: str = UART_PORT_NAME_DISCONNECTED
-    rxtx_log: list[RxTxLogEntry] = field(
-        default_factory=lambda: [RxTxLogEntry(b"Start of Log", "notice")]
+
+    # `rxtx_log` is a dictionary, where keys are increasing ints by the order the messages were
+    # added/received. Elements are popped from the start, and added to the end.
+    rxtx_log: dict[int, RxTxLogEntry] = field(
+        default_factory=lambda: {0: RxTxLogEntry(b"Start of Log", "notice")}
     )
     server_start_timestamp_sec: float = field(default_factory=time.time)
     last_tx_timestamp_sec: float = 0
     tx_queue: list[bytes] = field(default_factory=list)
 
     uart_log_refresh_rate_ms: int = 500
+
+    def append_to_rxtx_log(self: "AppStore", entry: RxTxLogEntry) -> None:
+        """Append a new entry to the RX/TX log."""
+        self.rxtx_log[len(self.rxtx_log)] = entry
 
 
 app_store = AppStore()
