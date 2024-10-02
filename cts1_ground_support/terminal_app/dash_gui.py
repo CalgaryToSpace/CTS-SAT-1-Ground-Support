@@ -363,6 +363,10 @@ def generate_rx_tx_log(
         ],
         id="rx-tx-log",
         className="p-3",
+        style={
+            "display": "block",
+            "width": "fit-content",  # Make the horizontal scrollbar work correctly.
+        },
     )
 
 
@@ -583,8 +587,12 @@ def run_dash_app(*, enable_debug: bool = False, enable_advanced: bool = False) -
                             "backgroundColor": "black",
                             "height": "100%",
                             "overflowY": "auto",
+                            "overflowX": "auto",
+                            # So that new messages appear at the bottom.
                             "flexDirection": "column-reverse",
                             "display": "flex",
+                            # Make the horizontal scrollbar work correctly.
+                            "position": "absolute",  # "fixed" also helps
                         },
                     ),
                 ],
