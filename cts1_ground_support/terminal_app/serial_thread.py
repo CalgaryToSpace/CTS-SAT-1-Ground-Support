@@ -27,16 +27,17 @@ def uart_listener() -> None:
                     # Check for incoming data
                     if port.in_waiting > 0:
                         received_data: bytes = port.readline()
-                        app_store.rxtx_log.append(RxTxLogEntry(received_data, "receive"))
+                        app_store.append_to_rxtx_log(RxTxLogEntry(received_data, "receive"))
                     elif len(app_store.rxtx_log) > MAX_RX_TX_LOG_ENTRIES:
                         # Data's not coming in rapid-fire, so take a sec to purge the buffer.
-                        app_store.rxtx_log = app_store.rxtx_log[-MAX_RX_TX_LOG_ENTRIES:]
+                        # Remove the oldest entry.
+                        app_store.rxtx_log.pop(next(iter(app_store.rxtx_log.keys())))
 
                     # Check for outgoing data
                     if len(app_store.tx_queue) > 0:
                         tx_data = app_store.tx_queue.pop(0)
                         port.write(tx_data)
-                        app_store.rxtx_log.append(RxTxLogEntry(tx_data, "transmit"))
+                        app_store.append_to_rxtx_log(RxTxLogEntry(tx_data, "transmit"))
                         app_store.last_tx_timestamp_sec = time.time()
 
                     time.sleep(0.01)
@@ -46,7 +47,7 @@ def uart_listener() -> None:
                 f"Serial port forcefully disconnected (SerialException: {e}): "
                 f"{app_store.uart_port_name}"
             )
-            app_store.rxtx_log.append(RxTxLogEntry(msg.encode(), "error"))
+            app_store.append_to_rxtx_log(RxTxLogEntry(msg.encode(), "error"))
             logger.warning(msg)
             app_store.uart_port_name = UART_PORT_NAME_DISCONNECTED  # propagate back to UI
             time.sleep(0.5)

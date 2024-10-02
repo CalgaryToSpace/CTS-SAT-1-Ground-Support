@@ -14,6 +14,9 @@ class AppStore:
     firmware_repo_path: Path | None = None
 
     uart_port_name: str = UART_PORT_NAME_DISCONNECTED
+
+    # `rxtx_log` is a dictionary, where keys are increasing ints by the order the messages were
+    # added/received. Elements are popped from the start, and added to the end.
     rxtx_log: dict[int, RxTxLogEntry] = field(
         default_factory=lambda: {0: RxTxLogEntry(b"Start of Log", "notice")}
     )
