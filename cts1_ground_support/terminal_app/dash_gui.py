@@ -38,25 +38,30 @@ UART_PORT_OPTION_LABEL_DISCONNECTED = "⛔ Disconnected ⛔"
 #            value comes from the app_store's latest connected port (esp on load).
 
 
-@functools.lru_cache  # cache forever is fine
-def get_telecommand_list_from_repo_cached() -> list[TelecommandDefinition]:
-    """Get the telecommand list from the repo, and cache the result."""
-    if app_store.firmware_repo_path is None:
-        # TODO: Maybe raise here?
+# TODO: Change this to a TTL cache so that it refreshes sometimes, maybe.
+@functools.lru_cache  # Cache forever is fine.
+def get_telecommand_list_from_repo_cached(repo_path: Path | None) -> list[TelecommandDefinition]:
+    """Get the telecommand list from a repo, and cache the result."""
+    if repo_path is None:
         return []
 
-    return parse_telecommand_list_from_repo(app_store.firmware_repo_path)
+    return parse_telecommand_list_from_repo(repo_path)
+
+
+def get_telecommand_list_from_repo() -> list[TelecommandDefinition]:
+    """Get the telecommand list from the repo, based on the app_store repo path."""
+    return get_telecommand_list_from_repo_cached(app_store.firmware_repo_path)
 
 
 def get_telecommand_name_list() -> list[str]:
     """Get a list of telecommand names by reading the telecommands from the repo."""
-    telecommands = get_telecommand_list_from_repo_cached()
+    telecommands = get_telecommand_list_from_repo()
     return [tcmd.name for tcmd in telecommands]
 
 
 def get_telecommand_by_name(name: str) -> TelecommandDefinition:
     """Get a telecommand definition by name."""
-    telecommands = get_telecommand_list_from_repo_cached()
+    telecommands = get_telecommand_list_from_repo()
     telecommand = next((tcmd for tcmd in telecommands if tcmd.name == name), None)
     if not telecommand:
         msg = f"Telecommand not found: {name}"
@@ -66,7 +71,7 @@ def get_telecommand_by_name(name: str) -> TelecommandDefinition:
 
 def get_max_arguments_per_telecommand() -> int:
     """Get the maximum number of arguments for any telecommand."""
-    telecommands = get_telecommand_list_from_repo_cached()
+    telecommands = get_telecommand_list_from_repo()
 
     if len(telecommands) == 0:
         return 0
@@ -662,6 +667,11 @@ def main() -> None:
             logger.info(f"Using provided CTS-SAT-1-OBC-Firmware repo: {args.firmware_repo}")
 
         app_store.firmware_repo_path = firmware_repo_path
+
+        logger.info(
+            f"CTS-SAT-1-OBC-Firmware repo contains {len(get_telecommand_name_list())} "
+            "telecommands."
+        )
 
         run_dash_app(
             enable_debug=args.debug,
