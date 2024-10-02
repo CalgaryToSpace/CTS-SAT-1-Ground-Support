@@ -137,7 +137,7 @@ def handle_uart_port_change(uart_port_name: str) -> None:
             msg = f"Serial port changed from {last_uart_port_name} to {uart_port_name}"
 
         logger.info(msg)
-        app_store.rxtx_log.append(RxTxLogEntry(msg.encode(), "notice"))
+        app_store.append_to_rxtx_log(RxTxLogEntry(msg.encode(), "notice"))
 
     app_store.uart_port_name = uart_port_name
 
@@ -236,7 +236,7 @@ def send_button_callback(
     if selected_command_name is None:
         msg = "No command selected. Can't send a command!"
         logger.error(msg)
-        app_store.rxtx_log.append(RxTxLogEntry(msg.encode(), "error"))
+        app_store.append_to_rxtx_log(RxTxLogEntry(msg.encode(), "error"))
         return
 
     args = [
@@ -246,13 +246,13 @@ def send_button_callback(
     if any(arg is None or arg == "" for arg in args):
         msg = f"Not all arguments are filled in. Can't run {selected_command_name}{args}!"
         logger.error(msg)
-        app_store.rxtx_log.append(RxTxLogEntry(msg.encode(), "error"))
+        app_store.append_to_rxtx_log(RxTxLogEntry(msg.encode(), "error"))
         return
 
     if app_store.uart_port_name == UART_PORT_NAME_DISCONNECTED:
         msg = "Can't send command when disconnected."
         logger.error(msg)
-        app_store.rxtx_log.append(RxTxLogEntry(msg.encode(), "error"))
+        app_store.append_to_rxtx_log(RxTxLogEntry(msg.encode(), "error"))
         return
 
     logger.info(f"Adding command to queue: {command_preview}")
@@ -268,7 +268,9 @@ def send_button_callback(
 def clear_log_button_callback(n_clicks: int) -> None:
     """Handle the "Clear Log" button click event by resetting the log."""
     logger.info(f"Clear Log button clicked ({n_clicks=})!")
-    app_store.rxtx_log = [RxTxLogEntry(b"Log Reset", "notice")].copy()
+
+    max_rxtx_log_index = max(app_store.rxtx_log.keys())
+    app_store.rxtx_log = {max_rxtx_log_index + 1: RxTxLogEntry(b"Log Reset", "notice")}.copy()
 
 
 @callback(
@@ -289,7 +291,7 @@ def update_uart_port_dropdown_options(
     if app_store.uart_port_name not in ([*port_name_list, UART_PORT_NAME_DISCONNECTED]):
         msg = f"Serial port is no longer available in list of ports: {app_store.uart_port_name}"
         logger.warning(msg)
-        app_store.rxtx_log.append(RxTxLogEntry(msg.encode(), "error"))
+        app_store.append_to_rxtx_log(RxTxLogEntry(msg.encode(), "error"))
         app_store.uart_port_name = UART_PORT_NAME_DISCONNECTED
 
     if app_store.uart_port_name != uart_port_name:
@@ -356,7 +358,8 @@ def generate_rx_tx_log(
                 ),
                 style=(entry.css_style | {"margin": "0", "lineHeight": "1.1"}),
             )
-            for entry in app_store.rxtx_log
+            for idx, entry in app_store.rxtx_log.items()
+            if idx > 0  # FIXME: Filter this based on the current log view amount
         ],
         id="rx-tx-log",
         className="p-3",
@@ -622,7 +625,7 @@ def run_dash_app(*, enable_debug: bool = False, enable_advanced: bool = False) -
             ),
             dcc.Store(id="stored-command-preview", data=""),
         ],
-        fluid=True,  # Use a fluid container for full width
+        fluid=True,  # Use a fluid container for full width.
     )
 
     start_uart_listener()
