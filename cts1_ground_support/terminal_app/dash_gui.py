@@ -626,8 +626,9 @@ def main() -> None:
         dest="firmware_repo",
         type=str,
         help=(
-            "Path to the root of the CTS-SAT-1-OBC-Firmware repository, for reading telecommand list."
-            " If not provided, the repo will automatically be cloned to a temporary directory."
+            "Path to the root of the CTS-SAT-1-OBC-Firmware repository, for reading telecommand "
+            "list. "
+            "If not provided, the repo will automatically be cloned to a temporary directory."
         ),
     )
     parser.add_argument(
