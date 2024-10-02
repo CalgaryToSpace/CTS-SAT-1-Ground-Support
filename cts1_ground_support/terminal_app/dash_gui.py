@@ -380,6 +380,7 @@ def generate_rx_tx_log(
     *,
     show_end_of_line_chars: bool = False,
     show_timestamp: bool = False,
+    auto_format_json: bool = False,
     pause_min_idx: int | None = None,
     pause_max_idx: int | None = None,
 ) -> html.Div:
@@ -393,7 +394,9 @@ def generate_rx_tx_log(
         [
             html.Pre(
                 entry.to_string(
-                    show_end_of_line_chars=show_end_of_line_chars, show_timestamp=show_timestamp
+                    show_end_of_line_chars=show_end_of_line_chars,
+                    show_timestamp=show_timestamp,
+                    auto_format_json=auto_format_json,
                 ),
                 style=(entry.css_style | {"margin": "0", "lineHeight": "1.1"}),
             )
@@ -443,15 +446,18 @@ def update_uart_log_interval(
     if display_options_checklist:
         show_end_of_line_chars = "show_end_of_line_chars" in display_options_checklist
         show_timestamp = "show_timestamp" in display_options_checklist
+        auto_format_json = "auto_format_json" in display_options_checklist
     else:
         show_end_of_line_chars = False
         show_timestamp = False
+        auto_format_json = False
 
     return (
         # New log entries.
         generate_rx_tx_log(
             show_end_of_line_chars=show_end_of_line_chars,
             show_timestamp=show_timestamp,
+            auto_format_json=auto_format_json,
             pause_min_idx=stored_rxtx_log_pause_limits.get("pause_min_idx"),
             pause_max_idx=stored_rxtx_log_pause_limits.get("pause_max_idx"),
         ),
@@ -593,8 +599,10 @@ def generate_left_pane(*, selected_command_name: str, enable_advanced: bool) -> 
                     options={
                         "show_end_of_line_chars": "Show End-of-Line Characters?",
                         "show_timestamp": "Show Timestamps?",
+                        "auto_format_json": "Auto Format JSON?",
                     },
                     id="display-options-checklist",
+                    value=["auto_format_json"],  # Default enables.
                 ),
             ]
         ),

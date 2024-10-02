@@ -8,6 +8,7 @@ from typing import Literal
 import pytz
 
 from cts1_ground_support.bytes import bytes_to_nice_str
+from cts1_ground_support.json_parser import auto_format_json_in_blob
 
 UART_PORT_NAME_DISCONNECTED = "disconnected"
 
@@ -38,7 +39,11 @@ class RxTxLogEntry:
         raise ValueError(msg)
 
     def to_string(
-        self: "RxTxLogEntry", *, show_end_of_line_chars: bool, show_timestamp: bool
+        self: "RxTxLogEntry",
+        *,
+        show_end_of_line_chars: bool,
+        show_timestamp: bool,
+        auto_format_json: bool,
     ) -> str:
         """Get the text representation of the log entry."""
         prefix = ""
@@ -53,6 +58,10 @@ class RxTxLogEntry:
         if self.entry_type == "error":
             return f"{prefix}==================== {self.raw_bytes.decode()} ===================="
 
-        return f"{prefix}" + bytes_to_nice_str(
-            self.raw_bytes, show_end_of_line_chars=show_end_of_line_chars
+        nice_str = bytes_to_nice_str(
+            self.raw_bytes,
+            show_end_of_line_chars=show_end_of_line_chars,
         )
+        if auto_format_json:
+            nice_str = auto_format_json_in_blob(nice_str)
+        return f"{prefix}" + nice_str
