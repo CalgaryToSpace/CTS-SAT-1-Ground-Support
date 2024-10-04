@@ -29,7 +29,7 @@ Over time, the goal is to develop it into the ground station control software.
         4. Close the Powershell Terminal (opened as Administrator).
 2. Clone this repo, and open a terminal in this repo's root.
 3. Run `python3 -m venv venv/` to create a Python virtual environment named `venv/` in the current directory.
-4. Run `./venv/Scripts/activate` (on Windows), or `source ./venv/bin/activate` (on real operating systems).
+4. Run `.\venv\Scripts\activate` (on Windows), or `source ./venv/bin/activate` (on real operating systems).
 5. Run `pip install -e cts1_ground_support[dev]` to install this Python Project in your virtual environment.
 6. Run `cts1_ground_support --help` to ensure it installed.
 7. Run `cts1_ground_support` to start the ground support terminal.
