@@ -1,8 +1,9 @@
 """Tools for parsing JSON strings from blobs of text."""
 
-import json
 from collections.abc import Iterator
 from dataclasses import dataclass
+
+import orjson
 
 
 @dataclass(kw_only=True)
@@ -24,7 +25,7 @@ def extract_json_blobs(content: str) -> Iterator[ParsedJson]:
             for end_idx in range(len(content) - 1, start_idx, -1):
                 if content[end_idx] == "}":
                     try:
-                        data = json.loads(content[start_idx : end_idx + 1])
+                        data = orjson.loads(content[start_idx : end_idx + 1])
                         yield ParsedJson(
                             data=data,
                             start_idx=start_idx,
@@ -33,7 +34,7 @@ def extract_json_blobs(content: str) -> Iterator[ParsedJson]:
                         )
                         start_idx = end_idx
                         break
-                    except json.JSONDecodeError:
+                    except orjson.JSONDecodeError:
                         pass
         start_idx += 1
 
@@ -43,6 +44,9 @@ def auto_format_json_in_blob(blob: str) -> str:
     json_parts = list(extract_json_blobs(blob))
 
     for json_part in json_parts:
-        blob = blob.replace(json_part.original_str, json.dumps(json_part.data, indent=4))
+        formatted_data: str = orjson.dumps(json_part.data, option=orjson.OPT_INDENT_2).decode(
+            "utf-8"
+        )
+        blob = blob.replace(json_part.original_str, formatted_data)
 
     return blob
