@@ -14,7 +14,10 @@ dependencies = [
   "dash-split-pane>=1,<2",
   "pytz",
   "orjson>3,<4",
-  "platformdirs>4,<5"
+  "platformdirs>4,<5",
+
+  # sortedcontainers provides SortedDict for efficiency.
+  "sortedcontainers>=2.4.0,<3",
 ]
 requires-python = ">=3.10"
 authors = [
@@ -42,6 +45,7 @@ dev = [
   "ruff",
   "coverage", # For CI.
   "pyright", # For type checking.
+  "sortedcontainers-stubs==2.4.2" # Type checking for sortedcontainers.
 ]
 
 [project.urls]

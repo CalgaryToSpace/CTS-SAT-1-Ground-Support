@@ -31,7 +31,7 @@ def uart_listener() -> None:
                     elif len(app_store.rxtx_log) > MAX_RX_TX_LOG_ENTRIES:
                         # Data's not coming in rapid-fire, so take a sec to purge the buffer.
                         # Remove the oldest entry.
-                        app_store.rxtx_log.pop(next(iter(app_store.rxtx_log.keys())))
+                        app_store.rxtx_log.pop(app_store.rxtx_log.keys()[0])
 
                     # Check for outgoing data
                     if len(app_store.tx_queue) > 0:

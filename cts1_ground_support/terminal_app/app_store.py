@@ -4,6 +4,8 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from sortedcontainers import SortedDict
+
 from cts1_ground_support.terminal_app.app_types import UART_PORT_NAME_DISCONNECTED, RxTxLogEntry
 
 
@@ -17,8 +19,9 @@ class AppStore:
 
     # `rxtx_log` is a dictionary, where keys are increasing ints by the order the messages were
     # added/received. Elements are popped from the start, and added to the end.
-    rxtx_log: dict[int, RxTxLogEntry] = field(
-        default_factory=lambda: {0: RxTxLogEntry(b"Start of Log", "notice")}
+    # Type of `rxtx_log`: SortedDict[int, RxTxLogEntry]
+    rxtx_log: SortedDict[int, RxTxLogEntry] = field(
+        default_factory=lambda: SortedDict({0: RxTxLogEntry(b"Start of Log", "notice")})
     )
     server_start_timestamp_sec: float = field(default_factory=time.time)
     last_tx_timestamp_sec: float = 0
@@ -28,7 +31,7 @@ class AppStore:
 
     def append_to_rxtx_log(self: "AppStore", entry: RxTxLogEntry) -> None:
         """Append a new entry to the RX/TX log."""
-        self.rxtx_log[len(self.rxtx_log)] = entry
+        self.rxtx_log[self.rxtx_log.keys()[-1] + 1] = entry
 
 
 app_store = AppStore()
