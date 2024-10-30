@@ -20,8 +20,11 @@ def uart_listener() -> None:
 
         try:
             with serial.Serial(app_store.uart_port_name, UART_BAUD_RATE, timeout=1) as port:
+                last_port_connected = app_store.uart_port_name
                 while True:
-                    if app_store.uart_port_name == UART_PORT_NAME_DISCONNECTED:
+                    if app_store.uart_port_name != last_port_connected:
+                        # If the port changed, break then reconnect.
+                        last_port_connected = app_store.uart_port_name
                         break
 
                     # Check for incoming data
@@ -33,7 +36,7 @@ def uart_listener() -> None:
                         # Remove the oldest entry.
                         app_store.rxtx_log.pop(app_store.rxtx_log.keys()[0])
 
-                    # Check for outgoing data
+                    # Check for outgoing data.
                     if len(app_store.tx_queue) > 0:
                         tx_data = app_store.tx_queue.pop(0)
                         port.write(tx_data)
