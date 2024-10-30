@@ -20,6 +20,7 @@ import dash_split_pane
 from dash import callback, dcc, html
 from dash.dependencies import Input, Output, State
 from loguru import logger
+from sortedcontainers import SortedDict
 
 from cts1_ground_support.paths import clone_firmware_repo
 from cts1_ground_support.serial import list_serial_ports
@@ -140,7 +141,7 @@ def handle_uart_port_change(uart_port_name: str) -> None:
     Input("input-tsexec-suffix-tag", "value"),
     Input("extra-suffix-tags-input", "value"),  # Advanced feature for debugging
     Input("uart-update-interval-component", "n_intervals"),
-    # TODO: maybe this could be cleaner with `Input/State("argument-inputs-container", "children")`
+    # TODO: Maybe this could be cleaner with `Input/State("argument-inputs-container", "children")`
     *[Input(f"arg-input-{arg_num}", "value") for arg_num in range(MAX_ARGS_PER_TELECOMMAND)],
     prevent_initial_call=True,  # Objects aren't created yet, so errors are thrown.
 )
@@ -208,12 +209,15 @@ def update_command_preview_render(command_preview: str) -> list:
     Input("send-button", "n_clicks"),
     State("telecommand-dropdown", "value"),
     State("stored-command-preview", "data"),
-    # TODO: maybe this could be cleaner with `Input/State("argument-inputs-container", "children")`
+    # TODO: Maybe this could be cleaner with `Input/State("argument-inputs-container", "children")`
     *[State(f"arg-input-{arg_num}", "value") for arg_num in range(MAX_ARGS_PER_TELECOMMAND)],
     prevent_initial_call=True,
 )
 def send_button_callback(
-    n_clicks: int, selected_command_name: str, command_preview: str, *every_arg_value: tuple[str]
+    n_clicks: int,
+    selected_command_name: str | None,
+    command_preview: str,
+    *every_arg_value: tuple[str],
 ) -> None:
     """Handle the send button click event by adding the command to the TX queue."""
     logger.info(f"Send button clicked ({n_clicks=})!")
@@ -254,8 +258,12 @@ def clear_log_button_callback(n_clicks: int) -> None:
     """Handle the "Clear Log" button click event by resetting the log."""
     logger.info(f"Clear Log button clicked ({n_clicks=})!")
 
-    max_rxtx_log_index = max(app_store.rxtx_log.keys())
-    app_store.rxtx_log = {max_rxtx_log_index + 1: RxTxLogEntry(b"Log Reset", "notice")}.copy()
+    max_rxtx_log_index = app_store.rxtx_log.keys()[-1]
+    app_store.rxtx_log = SortedDict(
+        {
+            max_rxtx_log_index + 1: RxTxLogEntry(b"Log Reset", "notice"),
+        }
+    ).copy()
 
 
 @callback(
@@ -264,24 +272,32 @@ def clear_log_button_callback(n_clicks: int) -> None:
     Output("pause-button", "color"),
     Input("pause-button", "n_clicks"),
 )
-def pause_button_callback(n_clicks: int) -> tuple[dict[str, int | bool], str, str]:
+def pause_button_callback(n_clicks: int) -> tuple[dict[str, int | bool | None], str, str]:
     """Handle the pause button click event by toggling the pause button state."""
     logger.info(f"Pause button clicked ({n_clicks=})!")
 
     if n_clicks % 2 == 0:
-        # Running
+        # Set to running.
+        logger.info("Setting to running")
         return (
-            {"paused": False},
+            {
+                "paused": False,
+                "pause_min_idx": None,
+                "pause_max_idx": None,
+            },
             "Pause ⏸️",
             "danger",
         )
 
-    # Paused
+    # Pausing.
+    pause_min_idx = app_store.rxtx_log.keys()[0]
+    pause_max_idx = app_store.rxtx_log.keys()[-1]
+    logger.info(f"Setting to paused: {pause_min_idx=}, {pause_max_idx=}")
     return (
         {
             "paused": True,
-            "pause_min_idx": next(iter(app_store.rxtx_log.keys())),
-            "pause_max_idx": max(app_store.rxtx_log.keys()),
+            "pause_min_idx": pause_min_idx,
+            "pause_max_idx": pause_max_idx,
         },
         "Resume ▶️",
         "success",
@@ -371,9 +387,11 @@ def generate_rx_tx_log(
 ) -> html.Div:
     """Generate the RX/TX log, which shows the most recent received and transmitted messages."""
     if pause_min_idx is None:
-        pause_min_idx = 0
+        pause_min_idx = app_store.rxtx_log.keys()[0]
     if pause_max_idx is None:
-        pause_max_idx = 100_000_000_000_000  # Arbitrary large number.
+        pause_max_idx = app_store.rxtx_log.keys()[-1]
+
+    logger.info(f"Showing log: {pause_min_idx=}, {pause_max_idx=}")
 
     return html.Div(
         [
@@ -414,7 +432,7 @@ def update_uart_log_interval(
     _n_clicks_clear_logs: int,
     _update_interval_count: int,
     display_options_checklist: list[str] | None,
-    stored_rxtx_log_pause_limits: dict[str, int | bool],
+    stored_rxtx_log_pause_limits: dict[str, int | bool | None],
 ) -> tuple[html.Div, int]:
     """Update the UART log at the specified interval. Also, update the refresh interval."""
     sec_since_send = time.time() - app_store.last_tx_timestamp_sec
