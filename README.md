@@ -35,6 +35,17 @@ Over time, the goal is to develop it into the ground station control software.
 7. Run `cts1_ground_support` to start the ground support terminal.
 8. Visit [http://127.0.0.1:8050/](http://127.0.0.1:8050/) in a web browser to view the web interface and send commands to your dev kit.
 
+## Developing Telecommands
+
+After following the Getting Started section, you can run the ground support terminal by running `cts1_ground_support`.
+
+If you are adding new telecommands, ensure that `CTS-SAT-1-Ground-Support` and `CTS-SAT-1-OBC-Firmware` are cloned in the same parents directory. Then, run the ground support terminal with this argument:
+
+```bash
+# To see new/in-progress telecommands, use the `-r` flag to specify the path to the firmware repo.
+cts1_ground_support -r ../CTS-SAT-1-OBC-Firmware
+```
+
 ## Development
 
 1. Install the project as in the Getting Started section.
