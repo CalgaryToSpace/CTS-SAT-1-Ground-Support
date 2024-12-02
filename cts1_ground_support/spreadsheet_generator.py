@@ -3,7 +3,6 @@ import re
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List
 
 import git
 
@@ -85,10 +84,11 @@ def parse_telecommand_array_table(c_code: str | Path) -> list[TelecommandDefinit
 
     top_level_matches = list(top_level_regex.finditer(c_code))
     if len(top_level_matches) != 1:
-        raise ValueError(
+        msg = (
             f"Expected to find exactly 1 telecommand array in the input code, but found "
             f"{len(top_level_matches)} matches."
         )
+        raise ValueError(msg)
 
     top_level_match = top_level_matches[0]
     all_struct_declarations = top_level_match.group("all_struct_declarations")
@@ -152,18 +152,21 @@ def extract_telecommand_arg_list(docstring: str) -> list[str] | None:
 
 
 def parse_telecommand_list_from_repo(repo_path: Path) -> list[TelecommandDefinition]:
-    """Parse telecommands from the repository and extract additional information."""
+    # Assert that the input is a Path object.
     if not isinstance(repo_path, Path):
-        raise TypeError(f"Expected a Path object, but got {type(repo_path)}")
+        msg = f"Expected a Path object, but got {type(repo_path)}"
+        raise TypeError(msg)
+    # Assert that the input is a directory.
     if not repo_path.is_dir():
-        raise ValueError(f"Expected a directory, but got {repo_path}")
+        msg = f"Expected a directory, but got {repo_path}"
+        raise ValueError(msg)
 
     telecommands_defs_path = repo_path / "firmware/Core/Src/telecommands/telecommand_definitions.c"
 
+    # Assert that the file exists.
     if not telecommands_defs_path.is_file():
-        raise ValueError(
-            "The telecommand definitions file does not exist in the expected location."
-        )
+        msg = "The telecommand definitions file does not exist in the expected location."
+        raise ValueError(msg)
 
     tcmd_list = parse_telecommand_array_table(telecommands_defs_path)
 
@@ -183,12 +186,15 @@ def parse_telecommand_list_from_repo(repo_path: Path) -> list[TelecommandDefinit
     return tcmd_list
 
 
-def save_telecommands_to_spreadsheet(telecommands: List[TelecommandDefinition], save_dir: Path):
+def save_telecommands_to_spreadsheet(
+    telecommands: list[TelecommandDefinition], save_dir: Path
+) -> None:
     """Save telecommands to a spreadsheet with a date-and-time-based filename.
 
     Args:
         telecommands (list[TelecommandDefinition]): List of telecommand definitions.
         save_dir (Path): Directory to save the spreadsheet.
+
     """
     # Ensure the save directory exists
     save_dir.mkdir(parents=True, exist_ok=True)
@@ -221,26 +227,28 @@ def save_telecommands_to_spreadsheet(telecommands: List[TelecommandDefinition], 
                 )
 
         # Notify the user of successful save
-        print(f"Telecommands saved to {file_path}")
+        print(f"Telecommands saved to {file_path}")  # noqa: T201
 
     except IOError as e:
         raise IOError(f"Failed to write telecommands to {file_path}: {e}")
 
+    return None
+
 
 def clone_firmware_repo(base_path: Path) -> tuple[Path, git.Repo]:
-    """
-    Clone the CTS-SAT-1-OBC-Firmware repository into the shared parent directory.
+    """Clone the CTS-SAT-1-OBC-Firmware repository into the shared parent directory.
 
     Args:
         base_path (Path): Path to the parent directory containing both repositories.
 
     Returns:
         tuple[Path, git.Repo]: Path to the cloned firmware repo and the git.Repo object.
+
     """
     firmware_repo_path = base_path / "CTS-SAT-1-OBC-Firmware"
 
     if not firmware_repo_path.exists():
-        print(f"Cloning CTS-SAT-1-OBC-Firmware into {firmware_repo_path}")
+        print(f"Cloning CTS-SAT-1-OBC-Firmware into {firmware_repo_path}")  # noqa: T201
         repo = git.Repo.clone_from(
             "https://github.com/CalgaryToSpace/CTS-SAT-1-OBC-Firmware.git",
             to_path=firmware_repo_path,
@@ -248,18 +256,18 @@ def clone_firmware_repo(base_path: Path) -> tuple[Path, git.Repo]:
             depth=1,  # Only clone the latest version of the main branch.
         )
     else:
-        print(f"CTS-SAT-1-OBC-Firmware already exists at {firmware_repo_path}")
+        print(f"CTS-SAT-1-OBC-Firmware already exists at {firmware_repo_path}")  # noqa: T201
         repo = git.Repo(firmware_repo_path)
 
     return firmware_repo_path, repo
 
 
 def prepare_paths() -> tuple[Path, Path]:
-    """
-    Prepare and return paths for the firmware and ground support repositories.
+    """Prepare and return paths for the firmware and ground support repositories.
 
     Returns:
         tuple[Path, Path]: Paths for the firmware repository and ground support repository.
+
     """
     # Dynamically determine the base path as the parent of the CTS-SAT-1-Ground-Support directory
     script_path = Path(__file__).resolve()
@@ -268,7 +276,8 @@ def prepare_paths() -> tuple[Path, Path]:
 
     # Validate the ground support repo path
     if not ground_support_repo_path.is_dir():
-        raise FileNotFoundError(f"Ground support repo not found at {ground_support_repo_path}")
+        msg = f"Ground support repo not found at {ground_support_repo_path}"
+        raise FileNotFoundError(msg)
 
     # Clone firmware repository at the base path
     firmware_repo_path, _ = clone_firmware_repo(base_path)
