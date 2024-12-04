@@ -32,7 +32,7 @@ class TelecommandDefinition:
         }
 
     def to_dict_table_fields(self: "TelecommandDefinition") -> dict[str, str | int]:
-        """Convert the telecommand definition to a dictionary, with only the fields from the array."""
+        """Convert the telecommand definition to a dictionary, with only the fields from the array."""  # noqa: E501
         return {
             "Command": self.name,
             "Function Name": self.tcmd_func,
@@ -152,6 +152,13 @@ def extract_telecommand_arg_list(docstring: str) -> list[str] | None:
 
 
 def parse_telecommand_list_from_repo(repo_path: Path) -> list[TelecommandDefinition]:
+    """Read the list of telecommands array table and extract docstrings for each telecommand.
+
+    Args:
+    ----
+        repo_path: The path to the root of the repository. If None, the path is set automatically.
+
+    """
     # Assert that the input is a Path object.
     if not isinstance(repo_path, Path):
         msg = f"Expected a Path object, but got {type(repo_path)}"
@@ -200,12 +207,12 @@ def save_telecommands_to_spreadsheet(
     save_dir.mkdir(parents=True, exist_ok=True)
 
     # Define the filename based on the current date and time
-    file_name = f"telecommands_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.csv"
+    file_name = f"telecommands_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.csv"  # noqa: DTZ005
     file_path = save_dir / file_name
 
     try:
         # Open the file for writing
-        with open(file_path, mode="w", newline="") as file:
+        with Path.open(file_path, mode="w", newline="") as file:
             writer = csv.writer(file)
             # Write the header row, adding "Docstring" to the columns
             writer.writerow(
@@ -229,10 +236,9 @@ def save_telecommands_to_spreadsheet(
         # Notify the user of successful save
         print(f"Telecommands saved to {file_path}")  # noqa: T201
 
-    except IOError as e:
-        raise IOError(f"Failed to write telecommands to {file_path}: {e}")
-
-    return None
+    except IOError as e:  # noqa: UP024
+        msg = f"Failed to write telecommands to {file_path}: {e}"
+        raise IOError(msg)  # noqa: B904, UP024
 
 
 def clone_firmware_repo(base_path: Path) -> tuple[Path, git.Repo]:
