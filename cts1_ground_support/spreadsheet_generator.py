@@ -1,4 +1,4 @@
-import csv
+import csv  # noqa: D100
 import re
 from dataclasses import dataclass
 from datetime import datetime
