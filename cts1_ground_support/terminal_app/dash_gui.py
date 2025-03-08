@@ -23,7 +23,7 @@ from loguru import logger
 from sortedcontainers import SortedDict
 
 from cts1_ground_support.paths import clone_firmware_repo
-from cts1_ground_support.serial import list_serial_ports
+from cts1_ground_support.serial_util import list_serial_ports
 from cts1_ground_support.telecommand_array_parser import parse_telecommand_list_from_repo
 from cts1_ground_support.telecommand_preview import generate_telecommand_preview
 from cts1_ground_support.telecommand_types import TelecommandDefinition

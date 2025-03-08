@@ -231,17 +231,17 @@ def test_parse_telecommand_list_from_repo() -> None:
     ]
 
     # Check a telecommand with 2 arguments.
-    found_read_file_tcmds = [tcmd for tcmd in telecommands if tcmd.name == "fs_write_file"]
+    found_read_file_tcmds = [tcmd for tcmd in telecommands if tcmd.name == "fs_write_file_str"]
     assert (
         len(found_read_file_tcmds) == 1
     ), f"Expected to find 1 fs_read_file_hex telecommand, but found {len(found_read_file_tcmds)}"
     read_file_telecommand = found_read_file_tcmds[0]
-    assert read_file_telecommand.name == "fs_write_file"
-    assert read_file_telecommand.tcmd_func == "TCMDEXEC_fs_write_file"
+    assert read_file_telecommand.name == "fs_write_file_str"
+    assert read_file_telecommand.tcmd_func == "TCMDEXEC_fs_write_file_str"
     assert read_file_telecommand.number_of_args == 2
     assert read_file_telecommand.full_docstring is not None
     assert read_file_telecommand.full_docstring.startswith("@brief ")
     assert read_file_telecommand.argument_descriptions == [
         "File path as string",
-        "String to write to file",
+        "String to write to file (up to 512 bytes)",
     ]
