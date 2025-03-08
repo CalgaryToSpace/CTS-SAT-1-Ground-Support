@@ -56,5 +56,5 @@ The ground support terminal will automatically reload when you make changes to t
 
 ## Telecommand Documentation
 This repository incorpoarates a feature to generate a spraedsheet of telecommands. To use this feature:
-1. cd into the \cts1_ground_support folder
-2. run `python spreadsheet_generator.py` in the terminal
+1. cd into the `cts1_ground_support` folder
+2. Run `python spreadsheet_generator.py` in the terminal
