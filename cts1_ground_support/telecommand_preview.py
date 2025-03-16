@@ -37,7 +37,7 @@ def generate_telecommand_preview(
     suffix_tags = {}.copy()
 
     if enable_tssent_suffix:
-        suffix_tags["tssent"] = str(int(round(time.time() * 1000)))
+        suffix_tags["tssent"] = str(round(time.time() * 1000))
 
     if tsexec_suffix_value is not None:
         if isinstance(tsexec_suffix_value, float):
