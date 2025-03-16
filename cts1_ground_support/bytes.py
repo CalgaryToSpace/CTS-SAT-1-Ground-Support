@@ -31,8 +31,8 @@ def bytes_to_nice_str(byte_obj: bytes, *, show_end_of_line_chars: bool) -> str:
         else:
             out += format_byte_as_hex(b)
 
-    # Convert some Unicode characters back to unicode (e.g., for unit tests).
-    good_unicode_chars = {"✔️", "✅", "❌"}
+    # Convert some Unicode characters/emojis back to unicode (e.g., for unit tests).
+    good_unicode_chars = {"✔️", "✅", "❌", "🔴", "🟢", "🚀"}
     for char in good_unicode_chars:
         char_as_bytes = char.encode("utf-8")
         find_str = "".join(format_byte_as_hex(b) for b in char_as_bytes)
