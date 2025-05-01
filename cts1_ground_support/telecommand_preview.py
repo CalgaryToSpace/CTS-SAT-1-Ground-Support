@@ -47,9 +47,6 @@ def generate_telecommand_preview(
         suffix_tags["tsexec"] = tsexec_suffix_value
 
     if log_filename_suffix_value is not None:
-        if len(log_filename_suffix_value) > 32:  # Update as needed from Firmware Repo
-            msg = "log_filename must be < 32 chars"
-            raise ValueError(msg)
         suffix_tags["log_filename"] = log_filename_suffix_value
 
     # Use extra_suffix_tags to override the rest of the suffix tags.
