@@ -22,6 +22,7 @@ def generate_telecommand_preview(
         enable_tssent_suffix: Whether to include the "tssent" suffix tag.
         tsexec_suffix_value: The value to use for the "tsexec" suffix tag. 0 to execute
             immediately, per the protocol.
+        log_filename_suffix_value: The value to use for the "log_filename" suffix tag.
         extra_suffix_tags: A dictionary of extra suffix tags to include in the telecommand.
 
 

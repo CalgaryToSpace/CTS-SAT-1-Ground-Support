@@ -560,7 +560,7 @@ def generate_left_pane(*, selected_command_name: str, enable_advanced: bool) -> 
                         style={"fontFamily": "monospace"},
                     ),
                     dbc.Label(
-                        "File Name to store TCMD response",  # Update as needed from Firmware
+                        "File Name to store TCMD response",
                         html_for="input-log_filename-suffix-tag",
                     ),
                 ],
