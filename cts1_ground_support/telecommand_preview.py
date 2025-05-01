@@ -9,6 +9,7 @@ def generate_telecommand_preview(
     arg_list: list[str],
     enable_tssent_suffix: bool,
     tsexec_suffix_value: int | str | None = None,
+    log_filename_suffix_value: str | None,
     extra_suffix_tags: dict[str, str] | None = None,
 ) -> str:
     """Construct a telecommand preview, as intented to be transmitted.
@@ -44,6 +45,12 @@ def generate_telecommand_preview(
             msg = "tsexec_suffix_value must be an integer or string."
             raise ValueError(msg)
         suffix_tags["tsexec"] = tsexec_suffix_value
+
+    if log_filename_suffix_value is not None:
+        if len(log_filename_suffix_value) > 32:  # Update as needed from Firmware Repo
+            msg = "log_filename must be < 32 chars"
+            raise ValueError(msg)
+        suffix_tags["log_filename"] = log_filename_suffix_value
 
     # Use extra_suffix_tags to override the rest of the suffix tags.
     if extra_suffix_tags is not None:
