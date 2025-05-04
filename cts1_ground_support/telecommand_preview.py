@@ -9,6 +9,7 @@ def generate_telecommand_preview(
     arg_list: list[str],
     enable_tssent_suffix: bool,
     tsexec_suffix_value: int | str | None = None,
+    resp_fname_suffix_value: str | None,
     extra_suffix_tags: dict[str, str] | None = None,
 ) -> str:
     """Construct a telecommand preview, as intented to be transmitted.
@@ -21,6 +22,7 @@ def generate_telecommand_preview(
         enable_tssent_suffix: Whether to include the "tssent" suffix tag.
         tsexec_suffix_value: The value to use for the "tsexec" suffix tag. 0 to execute
             immediately, per the protocol.
+        resp_fname_suffix_value: The value to use for the "resp_fname" suffix tag.
         extra_suffix_tags: A dictionary of extra suffix tags to include in the telecommand.
 
 
@@ -44,6 +46,9 @@ def generate_telecommand_preview(
             msg = "tsexec_suffix_value must be an integer or string."
             raise ValueError(msg)
         suffix_tags["tsexec"] = tsexec_suffix_value
+
+    if resp_fname_suffix_value is not None:
+        suffix_tags["resp_fname"] = resp_fname_suffix_value
 
     # Use extra_suffix_tags to override the rest of the suffix tags.
     if extra_suffix_tags is not None:

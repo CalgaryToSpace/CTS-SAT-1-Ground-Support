@@ -67,6 +67,7 @@ ignore = [
   "TD002", "TD003", "FIX002", "COM812",
   "D203", # Disable "one-blank-line-before-class" (conflicts with other option)
   "D213", # Disable "multi-line-summary-second-line" (conflicts with other option)
+  "PLR0913" # Disable: "Too many arguments in function definition (more than 5)"
 ]
 
 [tool.ruff.lint.per-file-ignores]

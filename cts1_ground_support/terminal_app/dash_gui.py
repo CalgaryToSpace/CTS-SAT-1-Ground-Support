@@ -139,6 +139,7 @@ def handle_uart_port_change(uart_port_name: str) -> None:
     Input("telecommand-dropdown", "value"),
     Input("suffix-tags-checklist", "value"),
     Input("input-tsexec-suffix-tag", "value"),
+    Input("input-resp_fname-suffix-tag", "value"),
     Input("extra-suffix-tags-input", "value"),  # Advanced feature for debugging
     Input("uart-update-interval-component", "n_intervals"),
     # TODO: Maybe this could be cleaner with `Input/State("argument-inputs-container", "children")`
@@ -149,6 +150,7 @@ def update_stored_command_preview(
     selected_command_name: str,
     suffix_tags_checklist: list[str] | None,
     tsexec_suffix_tag: str | None,
+    resp_fname_suffix_tag: str | None,
     extra_suffix_tags_input: str,
     _n_intervals: int,
     *every_arg_value: str,
@@ -163,6 +165,9 @@ def update_stored_command_preview(
 
     if tsexec_suffix_tag == "":
         tsexec_suffix_tag = None
+
+    if resp_fname_suffix_tag == "":
+        resp_fname_suffix_tag = None
 
     # Get the selected command and its arguments.
     selected_command = get_telecommand_by_name(selected_command_name)
@@ -189,6 +194,7 @@ def update_stored_command_preview(
         arg_list=arg_vals,
         enable_tssent_suffix=enable_tssent_suffix,
         tsexec_suffix_value=tsexec_suffix_tag,
+        resp_fname_suffix_value=resp_fname_suffix_tag,
         extra_suffix_tags=extra_suffix_tags.copy(),
     )
 
@@ -539,6 +545,23 @@ def generate_left_pane(*, selected_command_name: str, enable_advanced: bool) -> 
                     dbc.Label(
                         "Timestamp to Execute Command (@tsexec=xxx)",
                         html_for="input-tsexec-suffix-tag",
+                    ),
+                ],
+                className="mb-3",
+            ),
+        ),
+        html.Div(
+            dbc.FormFloating(
+                [
+                    dbc.Input(
+                        type="text",
+                        id="input-resp_fname-suffix-tag",
+                        placeholder="File Name to log the response",
+                        style={"fontFamily": "monospace"},
+                    ),
+                    dbc.Label(
+                        "File Name to store TCMD response",
+                        html_for="input-resp_fname-suffix-tag",
                     ),
                 ],
                 className="mb-3",
