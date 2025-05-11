@@ -53,3 +53,7 @@ cts1_ground_support -r ../CTS-SAT-1-OBC-Firmware
 3. Optional: Run `cts1_ground_support --debug` to start the ground support terminal in debug mode.
 
 The ground support terminal will automatically reload when you make changes to the code. It is written using the Dash framework in Python.
+
+## Screenshots
+
+![Screenshot of the CTS-SAT-1 Ground Support Terminal](./docs/screenshot_1.png)
