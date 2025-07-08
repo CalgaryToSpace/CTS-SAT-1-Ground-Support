@@ -228,6 +228,8 @@ def test_parse_telecommand_list_from_repo() -> None:
     assert read_file_telecommand.full_docstring.startswith("@brief ")
     assert read_file_telecommand.argument_descriptions == [
         "File path as string",
+        "Start offset (bytes). Nominally, pick 0",
+        "Length to read (bytes). 0 to read max.",
     ]
 
     # Check a telecommand with 2 arguments.
