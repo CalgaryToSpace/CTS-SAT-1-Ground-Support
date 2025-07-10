@@ -215,7 +215,7 @@ def test_parse_telecommand_list_from_repo() -> None:
     assert hello_world_telecommand.full_docstring.startswith("@brief ")
     assert hello_world_telecommand.argument_descriptions == []
 
-    # Check a telecommand with 1 argument.
+    # Check a telecommand with 3 arguments.
     found_read_file_tcmds = [tcmd for tcmd in telecommands if tcmd.name == "fs_read_file_hex"]
     assert (
         len(found_read_file_tcmds) == 1
@@ -223,11 +223,13 @@ def test_parse_telecommand_list_from_repo() -> None:
     read_file_telecommand = found_read_file_tcmds[0]
     assert read_file_telecommand.name == "fs_read_file_hex"
     assert read_file_telecommand.tcmd_func == "TCMDEXEC_fs_read_file_hex"
-    assert read_file_telecommand.number_of_args == 1
+    assert read_file_telecommand.number_of_args == 3
     assert read_file_telecommand.full_docstring is not None
     assert read_file_telecommand.full_docstring.startswith("@brief ")
     assert read_file_telecommand.argument_descriptions == [
         "File path as string",
+        "Start offset (bytes). Nominally, pick 0.",
+        "Length to read (bytes). 0 to read max.",
     ]
 
     # Check a telecommand with 2 arguments.
