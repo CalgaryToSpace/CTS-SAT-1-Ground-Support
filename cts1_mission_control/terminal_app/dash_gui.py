@@ -22,15 +22,15 @@ from dash.dependencies import Input, Output, State
 from loguru import logger
 from sortedcontainers import SortedDict
 
-from cts1_ground_support.paths import clone_firmware_repo
-from cts1_ground_support.serial_util import list_serial_ports
-from cts1_ground_support.telecommand_array_parser import parse_telecommand_list_from_repo
-from cts1_ground_support.telecommand_preview import generate_telecommand_preview
-from cts1_ground_support.telecommand_types import TelecommandDefinition
-from cts1_ground_support.terminal_app.app_config import MAX_ARGS_PER_TELECOMMAND
-from cts1_ground_support.terminal_app.app_store import app_store
-from cts1_ground_support.terminal_app.app_types import UART_PORT_NAME_DISCONNECTED, RxTxLogEntry
-from cts1_ground_support.terminal_app.serial_thread import start_uart_listener
+from cts1_mission_control.paths import clone_firmware_repo
+from cts1_mission_control.serial_util import list_serial_ports
+from cts1_mission_control.telecommand_array_parser import parse_telecommand_list_from_repo
+from cts1_mission_control.telecommand_preview import generate_telecommand_preview
+from cts1_mission_control.telecommand_types import TelecommandDefinition
+from cts1_mission_control.terminal_app.app_config import MAX_ARGS_PER_TELECOMMAND
+from cts1_mission_control.terminal_app.app_store import app_store
+from cts1_mission_control.terminal_app.app_types import UART_PORT_NAME_DISCONNECTED, RxTxLogEntry
+from cts1_mission_control.terminal_app.serial_thread import start_uart_listener
 
 UART_PORT_OPTION_LABEL_DISCONNECTED = "⛔ Disconnected ⛔"
 
@@ -637,7 +637,7 @@ def generate_left_pane(*, selected_command_name: str, enable_advanced: bool) -> 
 
 def run_dash_app(*, enable_debug: bool = False, enable_advanced: bool = False) -> None:
     """Run the main Dash application."""
-    app_name = "CTS-SAT-1 Ground Support"
+    app_name = "CTS-SAT-1 Mission Control"
     app = dash.Dash(
         __name__,  # required to load /assets folder
         external_stylesheets=[dbc.themes.BOOTSTRAP],

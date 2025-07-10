@@ -56,6 +56,7 @@ Repository = "https://github.com/CalgaryToSpace/CTS-SAT-1-OBC-Firmware"
 [project.scripts]
 cts1_ground_support = "cts1_ground_support:main"
 cts1_terminal = "cts1_ground_support:main"
+cts1_mission_control = "cts1_mission_control:main"
 
 [tool.ruff]
 line-length = 99

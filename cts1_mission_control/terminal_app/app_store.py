@@ -6,7 +6,7 @@ from pathlib import Path
 
 from sortedcontainers import SortedDict
 
-from cts1_ground_support.terminal_app.app_types import UART_PORT_NAME_DISCONNECTED, RxTxLogEntry
+from cts1_mission_control.terminal_app.app_types import UART_PORT_NAME_DISCONNECTED, RxTxLogEntry
 
 
 @dataclass

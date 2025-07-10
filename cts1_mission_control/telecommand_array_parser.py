@@ -4,8 +4,8 @@ import json
 import re
 from pathlib import Path
 
-from cts1_ground_support.paths import read_text_file
-from cts1_ground_support.telecommand_types import TelecommandDefinition
+from cts1_mission_control.paths import read_text_file
+from cts1_mission_control.telecommand_types import TelecommandDefinition
 
 
 def remove_c_comments(text: str) -> str:

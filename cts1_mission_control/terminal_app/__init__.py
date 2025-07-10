@@ -1,1 +1,1 @@
-"""Core GUI for the CTS1 Ground Support Software."""
+"""Core GUI for the CTS1 Mission Control Software."""

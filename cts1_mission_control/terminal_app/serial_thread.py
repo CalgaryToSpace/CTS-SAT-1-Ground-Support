@@ -6,9 +6,9 @@ import time
 import serial
 from loguru import logger
 
-from cts1_ground_support.terminal_app.app_config import MAX_RX_TX_LOG_ENTRIES, UART_BAUD_RATE
-from cts1_ground_support.terminal_app.app_store import app_store
-from cts1_ground_support.terminal_app.app_types import UART_PORT_NAME_DISCONNECTED, RxTxLogEntry
+from cts1_mission_control.terminal_app.app_config import MAX_RX_TX_LOG_ENTRIES, UART_BAUD_RATE
+from cts1_mission_control.terminal_app.app_store import app_store
+from cts1_mission_control.terminal_app.app_types import UART_PORT_NAME_DISCONNECTED, RxTxLogEntry
 
 
 def uart_listener() -> None:

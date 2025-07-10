@@ -7,8 +7,8 @@ from typing import Literal
 
 import pytz
 
-from cts1_ground_support.bytes import bytes_to_nice_str
-from cts1_ground_support.json_parser import auto_format_json_in_blob
+from cts1_mission_control.bytes import bytes_to_nice_str
+from cts1_mission_control.json_parser import auto_format_json_in_blob
 
 UART_PORT_NAME_DISCONNECTED = "disconnected"
 
