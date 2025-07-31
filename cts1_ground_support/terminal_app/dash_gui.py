@@ -723,6 +723,7 @@ def run_dash_app(*, enable_debug: bool = False, enable_advanced: bool = False) -
 def main() -> None:
     from pathlib import Path
     from cts1_ground_support.terminal_app import log_config
+    #Path for the log directory
     log_config.log_dir = Path("C:/Users/megan/OneDrive/Documents/CTS_SAT_1_Logs")
     from cts1_ground_support.terminal_app.app_store import app_store
     from cts1_ground_support.terminal_app.app_types import RxTxLogEntry
@@ -761,6 +762,7 @@ def main() -> None:
     with tempfile.TemporaryDirectory() as tmp_dir:
         from cts1_ground_support.terminal_app.app_store import app_store
         from pathlib import Path
+        #Path for the log directory
         app_store.log_dir = Path("C:/Users/megan/OneDrive/Documents/CTS_SAT_1_Logs")
 
         if args.firmware_repo is None:
