@@ -204,9 +204,9 @@ def test_parse_telecommand_list_from_repo() -> None:
 
     # Check that we have the hello_world telecommand.
     found_hello_world_tcmds = [tcmd for tcmd in telecommands if tcmd.name == "hello_world"]
-    assert (
-        len(found_hello_world_tcmds) == 1
-    ), f"Expected to find 1 hello_world telecommand, but found {len(found_hello_world_tcmds)}"
+    assert len(found_hello_world_tcmds) == 1, (
+        f"Expected to find 1 hello_world telecommand, but found {len(found_hello_world_tcmds)}"
+    )
     hello_world_telecommand = found_hello_world_tcmds[0]
     assert hello_world_telecommand.name == "hello_world"
     assert hello_world_telecommand.tcmd_func == "TCMDEXEC_hello_world"
@@ -217,9 +217,9 @@ def test_parse_telecommand_list_from_repo() -> None:
 
     # Check a telecommand with 1 argument.
     found_read_file_tcmds = [tcmd for tcmd in telecommands if tcmd.name == "fs_read_file_hex"]
-    assert (
-        len(found_read_file_tcmds) == 1
-    ), f"Expected to find 1 fs_read_file_hex telecommand, but found {len(found_read_file_tcmds)}"
+    assert len(found_read_file_tcmds) == 1, (
+        f"Expected to find 1 fs_read_file_hex telecommand, but found {len(found_read_file_tcmds)}"
+    )
     read_file_telecommand = found_read_file_tcmds[0]
     assert read_file_telecommand.name == "fs_read_file_hex"
     assert read_file_telecommand.tcmd_func == "TCMDEXEC_fs_read_file_hex"
@@ -232,9 +232,9 @@ def test_parse_telecommand_list_from_repo() -> None:
 
     # Check a telecommand with 2 arguments.
     found_read_file_tcmds = [tcmd for tcmd in telecommands if tcmd.name == "fs_write_file_str"]
-    assert (
-        len(found_read_file_tcmds) == 1
-    ), f"Expected to find 1 fs_read_file_hex telecommand, but found {len(found_read_file_tcmds)}"
+    assert len(found_read_file_tcmds) == 1, (
+        f"Expected to find 1 fs_read_file_hex telecommand, but found {len(found_read_file_tcmds)}"
+    )
     read_file_telecommand = found_read_file_tcmds[0]
     assert read_file_telecommand.name == "fs_write_file_str"
     assert read_file_telecommand.tcmd_func == "TCMDEXEC_fs_write_file_str"
