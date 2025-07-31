@@ -721,7 +721,15 @@ def run_dash_app(*, enable_debug: bool = False, enable_advanced: bool = False) -
 
 
 def main() -> None:
-    """Run the main server, with optional debug mode (via CLI arg)."""
+    from pathlib import Path
+    from cts1_ground_support.terminal_app import log_config
+    log_config.log_dir = Path("C:/Users/megan/OneDrive/Documents/CTS_SAT_1_Logs")
+    from cts1_ground_support.terminal_app.app_store import app_store
+    from cts1_ground_support.terminal_app.app_types import RxTxLogEntry
+    app_store.rxtx_log[0] = RxTxLogEntry(b"Start of Log", "notice")
+    import argparse
+    import tempfile
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-r",
@@ -747,9 +755,14 @@ def main() -> None:
         action="store_true",
         help="Enable advanced features for ground debugging, like the extra suffix tags input.",
     )
+    # Remove the --log-dir argument and set a fixed log directory
     args = parser.parse_args()
 
     with tempfile.TemporaryDirectory() as tmp_dir:
+        from cts1_ground_support.terminal_app.app_store import app_store
+        from pathlib import Path
+        app_store.log_dir = Path("C:/Users/megan/OneDrive/Documents/CTS_SAT_1_Logs")
+
         if args.firmware_repo is None:
             firmware_repo_path, repo = clone_firmware_repo(Path(tmp_dir))
             logger.info(

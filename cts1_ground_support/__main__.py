@@ -2,5 +2,7 @@
 
 from cts1_ground_support.terminal_app.dash_gui import main
 
+print("[DEBUG] __main__.py started")
+
 if __name__ == "__main__":
     main()
