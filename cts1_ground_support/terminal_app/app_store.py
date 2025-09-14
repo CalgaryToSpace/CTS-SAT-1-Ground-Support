@@ -30,8 +30,20 @@ class AppStore:
     uart_log_refresh_rate_ms: int = 500
 
     def append_to_rxtx_log(self: "AppStore", entry: RxTxLogEntry) -> None:
-        """Append a new entry to the RX/TX log."""
+        """Append a new entry to the RX/TX log and write to daily file."""
+        # Add to in-memory log
         self.rxtx_log[self.rxtx_log.keys()[-1] + 1] = entry
+        
+        # Write to daily log file
+        try:
+            from cts1_ground_support.terminal_app.file_logger import daily_logger
+            daily_logger.log_entry(entry)
+        except Exception as e:
+            print(f"Error writing to log file: {e}")
 
 
 app_store = AppStore()
+
+# Log the initial "Start of Log" entry to file
+from cts1_ground_support.terminal_app.file_logger import daily_logger
+daily_logger.log_entry(app_store.rxtx_log[0])

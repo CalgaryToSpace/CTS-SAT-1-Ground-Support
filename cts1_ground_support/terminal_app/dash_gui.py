@@ -32,6 +32,12 @@ from cts1_ground_support.terminal_app.app_store import app_store
 from cts1_ground_support.terminal_app.app_types import UART_PORT_NAME_DISCONNECTED, RxTxLogEntry
 from cts1_ground_support.terminal_app.serial_thread import start_uart_listener
 
+from cts1_ground_support.terminal_app.file_logger import daily_logger
+from cts1_ground_support.terminal_app.log_file_components import (
+    generate_log_file_info_section,
+    setup_download_route,
+)
+
 UART_PORT_OPTION_LABEL_DISCONNECTED = "⛔ Disconnected ⛔"
 
 # TODO: log the UART comms to a file
@@ -632,6 +638,7 @@ def generate_left_pane(*, selected_command_name: str, enable_advanced: bool) -> 
                 ),
             ]
         ),
+        *generate_log_file_info_section(),
     ]
 
 
@@ -648,6 +655,9 @@ def run_dash_app(*, enable_debug: bool = False, enable_advanced: bool = False) -
             "Updating..." if enable_debug else ""
         ),
     )
+    
+    # Set up download route for log files
+    setup_download_route(app)
 
     app.layout = dbc.Container(
         [
@@ -749,33 +759,43 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        if args.firmware_repo is None:
-            firmware_repo_path, repo = clone_firmware_repo(Path(tmp_dir))
+    try:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            if args.firmware_repo is None:
+                firmware_repo_path, repo = clone_firmware_repo(Path(tmp_dir))
+                logger.info(
+                    "Cloned CTS-SAT-1-OBC-Firmware repo to temporary directory "
+                    f"(commit={repo.head.commit.hexsha[0:7]}): {tmp_dir}"
+                )
+            else:
+                firmware_repo_path = Path(args.firmware_repo)
+
+                if not firmware_repo_path.is_dir():
+                    msg = f"Provided CTS-SAT-1-OBC-Firmware repo not found: {args.firmware_repo}"
+                    raise FileNotFoundError(msg)
+
+                logger.info(f"Using provided CTS-SAT-1-OBC-Firmware repo: {args.firmware_repo}")
+
+            app_store.firmware_repo_path = firmware_repo_path
+
             logger.info(
-                "Cloned CTS-SAT-1-OBC-Firmware repo to temporary directory "
-                f"(commit={repo.head.commit.hexsha[0:7]}): {tmp_dir}"
+                f"CTS-SAT-1-OBC-Firmware repo contains {len(get_telecommand_name_list())} "
+                "telecommands."
             )
-        else:
-            firmware_repo_path = Path(args.firmware_repo)
 
-            if not firmware_repo_path.is_dir():
-                msg = f"Provided CTS-SAT-1-OBC-Firmware repo not found: {args.firmware_repo}"
-                raise FileNotFoundError(msg)
-
-            logger.info(f"Using provided CTS-SAT-1-OBC-Firmware repo: {args.firmware_repo}")
-
-        app_store.firmware_repo_path = firmware_repo_path
-
-        logger.info(
-            f"CTS-SAT-1-OBC-Firmware repo contains {len(get_telecommand_name_list())} "
-            "telecommands."
-        )
-
-        run_dash_app(
-            enable_debug=args.debug,
-            enable_advanced=args.advanced,
-        )
+            run_dash_app(
+                enable_debug=args.debug,
+                enable_advanced=args.advanced,
+            )
+ 
+    finally:
+        # Ensure log file is properly closed
+        try:
+            from cts1_ground_support.terminal_app.file_logger import daily_logger
+            daily_logger.close()
+        except:
+            pass
+                
 
 
 if __name__ == "__main__":
