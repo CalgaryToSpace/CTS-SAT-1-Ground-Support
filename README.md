@@ -21,6 +21,12 @@ Over time, the goal is to develop it into the ground station control software.
 
 ## Getting Started
 
+### Using uv
+1. install the `uv` package manager
+2. run `uv tool install git+https://github.com/CalgaryToSpace/CTS-SAT-1-Ground-Support` 
+
+### By Cloning 
+
 1. On sub-par operating systems:
     * **On Windows:** Install Linux. Or, if you're stubborn, do this:
         1. Install "Python 3.11" from the Microsoft Store.
