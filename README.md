@@ -21,11 +21,15 @@ Over time, the goal is to develop it into the ground station control software.
 
 ## Getting Started
 
-### Using uv
-1. install the `uv` package manager
-2. run `uv tool install git+https://github.com/CalgaryToSpace/CTS-SAT-1-Ground-Support` 
+### Using uv (to use)
 
-### By Cloning 
+1. Install the `uv` package manager: https://docs.astral.sh/uv/getting-started/installation/
+2. Run `uv tool install git+https://github.com/CalgaryToSpace/CTS-SAT-1-Ground-Support`
+3. Run `cts1_ground_support --help` to ensure it installed.
+4. Run `cts1_ground_support` to start the ground support terminal.
+5. Visit [http://127.0.0.1:8050/](http://127.0.0.1:8050/) in a web browser to view the web interface and send commands to your dev kit.
+
+### By Cloning  (for development)
 
 1. On sub-par operating systems:
     * **On Windows:** Install Linux. Or, if you're stubborn, do this:
