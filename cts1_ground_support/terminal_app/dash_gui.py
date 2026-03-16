@@ -211,6 +211,12 @@ def update_command_preview_render(command_preview: str) -> list:
     ]
 
 
+def send_command_to_device(command_text: str) -> None:
+    """Send a command to the UART port."""
+    app_store.last_tx_timestamp_sec = time.time()
+    app_store.tx_queue.append(command_text.encode("ascii"))
+
+
 @callback(
     Input("send-button", "n_clicks"),
     State("telecommand-dropdown", "value"),
@@ -252,8 +258,7 @@ def send_button_callback(
 
     logger.info(f"Adding command to queue: {command_preview}")
 
-    app_store.last_tx_timestamp_sec = time.time()
-    app_store.tx_queue.append(command_preview.encode("ascii"))
+    send_command_to_device(command_preview)
 
 
 @callback(
@@ -474,10 +479,23 @@ def update_uart_log_interval(
     )
 
 
-def generate_left_pane(*, selected_command_name: str, enable_advanced: bool) -> list:
+@callback(
+    Input("send-time-sync-command-button", "n_clicks"),
+    prevent_initial_call=True,
+)
+def send_time_sync_command_callback(n_clicks: int) -> None:
+    """Handle the "Send Time Sync Command" button click event by sending the command."""
+    logger.info(f"Send Time Sync Command button clicked ({n_clicks=})!")
+
+    current_time_ms = int(time.time() * 1000)
+
+    send_command_to_device(f"CTS1+set_system_time({current_time_ms})!")
+
+
+def _generate_left_pane_config_tab() -> list:
     """Make the left pane of the GUI, to be put inside a Col."""
     return [
-        html.H1("CTS-SAT-1 Ground Support - Telecommand Terminal", className="text-center"),
+        html.Hr(),
         dbc.Row(
             [
                 dbc.Label("Select a Serial Port:", html_for="uart-port-dropdown"),
@@ -502,6 +520,29 @@ def generate_left_pane(*, selected_command_name: str, enable_advanced: bool) -> 
                 ),
             ],
         ),
+        html.Hr(),
+        html.H4("Display Options", className="text-center"),
+        html.Div(
+            [
+                dbc.Checklist(
+                    options={
+                        "show_end_of_line_chars": "Show End-of-Line Characters?",
+                        "show_timestamp": "Show Timestamps?",
+                        "auto_format_json": "Auto Format JSON?",
+                    },
+                    id="display-options-checklist",
+                    value=["auto_format_json"],  # Default enables.
+                ),
+            ]
+        ),
+    ]
+
+
+def _generate_left_pane_send_commands(
+    *, selected_command_name: str, enable_advanced: bool
+) -> list:
+    """Make the left pane of the GUI, to be put inside a Col."""
+    return [
         html.Hr(),
         dbc.Row(
             [
@@ -617,20 +658,47 @@ def generate_left_pane(*, selected_command_name: str, enable_advanced: bool) -> 
         ),
         html.Hr(),
         html.Div(id="selected-tcmd-info-container", className="mb-3"),
+    ]
+
+
+def _generate_left_pane_tools() -> list:
+    """Generate the left pane of the GUI, to be put inside a Col."""
+    return [
         html.Hr(),
-        html.H4("Display Options", className="text-center"),
-        html.Div(
-            [
-                dbc.Checklist(
-                    options={
-                        "show_end_of_line_chars": "Show End-of-Line Characters?",
-                        "show_timestamp": "Show Timestamps?",
-                        "auto_format_json": "Auto Format JSON?",
-                    },
-                    id="display-options-checklist",
-                    value=["auto_format_json"],  # Default enables.
+        dbc.Button(
+            "Send Time Sync Command",
+            id="send-time-sync-command-button",
+            n_clicks=0,
+            className="m-1 px-3",
+            style={"width": "auto"},
+            color="info",
+        ),
+    ]
+
+
+def generate_left_pane(*, selected_command_name: str, enable_advanced: bool) -> list:
+    """Make the left pane of the GUI, to be put inside a Col."""
+    return [
+        html.H1("CTS-SAT-1 Ground Support - Telecommand Terminal", className="text-center"),
+        dbc.Tabs(
+            id="left-pane-tabs",
+            children=[
+                dbc.Tab(
+                    label="Connect and Config",
+                    children=_generate_left_pane_config_tab(),
                 ),
-            ]
+                dbc.Tab(
+                    label="Commands",
+                    children=_generate_left_pane_send_commands(
+                        selected_command_name=selected_command_name,
+                        enable_advanced=enable_advanced,
+                    ),
+                ),
+                dbc.Tab(
+                    label="Tools",
+                    children=_generate_left_pane_tools(),
+                ),
+            ],
         ),
     ]
 
