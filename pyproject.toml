@@ -5,20 +5,6 @@ build-backend = "hatchling.build"
 [project]
 name = "cts1_ground_support"
 version = "v0-dev"
-dependencies = [
-  "GitPython<4,>3",
-  "pyserial>3,<4",
-  "loguru~=0.7.2",
-  "dash>2,<3",
-  "dash-bootstrap-components>1,<2",
-  "dash-split-pane>=1,<2",
-  "pytz",
-  "orjson>3,<4",
-  "platformdirs>4,<5",
-
-  # sortedcontainers provides SortedDict for efficiency.
-  "sortedcontainers>=2.4.0,<3",
-]
 requires-python = ">=3.10"
 authors = [
   {name = "CalgaryToSpace"},
@@ -35,12 +21,25 @@ classifiers = [
   "Programming Language :: Python"
 ]
 
-[project.optional-dependencies]
+dependencies = [
+  "GitPython<4,>3",
+  "pyserial>3,<4",
+  "loguru~=0.7.2",
+  "dash>2,<3",
+  "dash-bootstrap-components>1,<2",
+  "dash-split-pane>=1,<2",
+  "pytz",
+  "orjson>3,<4",
+
+  # sortedcontainers provides SortedDict for efficiency.
+  "sortedcontainers>=2.4.0,<3",
+]
+
+[dependency-groups]
 dev = [
   "pytest",
   "twine",
   "wheel",
-  "setuptools",
   "hatchling",
   "ruff==0.12.7",
   "coverage", # For CI.
@@ -56,6 +55,9 @@ Repository = "https://github.com/CalgaryToSpace/CTS-SAT-1-OBC-Firmware"
 [project.scripts]
 cts1_ground_support = "cts1_ground_support:main"
 cts1_terminal = "cts1_ground_support:main"
+
+[tool.pyright]
+typeCheckingMode = "standard"
 
 [tool.ruff]
 line-length = 99
