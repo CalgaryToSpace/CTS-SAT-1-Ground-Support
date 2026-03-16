@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "cts1_ground_support"
 version = "v0-dev"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 authors = [
   {name = "CalgaryToSpace"},
 ]
