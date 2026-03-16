@@ -480,7 +480,7 @@ def update_uart_log_interval(
 
 
 @callback(
-    Input("send-time-sync-command-button", "n_clicks"),
+    Input("send-time-sync-command-tool-button", "n_clicks"),
     prevent_initial_call=True,
 )
 def send_time_sync_command_callback(n_clicks: int) -> None:
@@ -488,8 +488,29 @@ def send_time_sync_command_callback(n_clicks: int) -> None:
     logger.info(f"Send Time Sync Command button clicked ({n_clicks=})!")
 
     current_time_ms = int(time.time() * 1000)
-
     send_command_to_device(f"CTS1+set_system_time({current_time_ms})!")
+
+
+@callback(
+    Input("send-immediate-execution-tool-button", "n_clicks"),
+    prevent_initial_call=True,
+)
+def send_immediate_execution_command_callback(n_clicks: int) -> None:
+    """Handle the "Send Immediate Execution" button click event by sending the config commands."""
+    logger.info(f"Send Immediate Execution button clicked ({n_clicks=})!")
+
+    # Disable tasks that take a long time (not necessarily critical to do).
+    send_command_to_device("CTS1+config_set_int_var(EPS_monitor_interval_ms,1000000000)!")
+    time.sleep(1)
+    send_command_to_device("CTS1+config_set_int_var(EPS_time_sync_period_sec,1000000000)!")
+    time.sleep(1)
+    send_command_to_device("CTS1+config_set_int_var(COMMS_beacon_interval_ms,1000000000)!")
+    time.sleep(1)
+
+    # Important part: Immediately parse and queue commands upon UART receive.
+    send_command_to_device("CTS1+config_set_int_var(TCMD_handle_umbilical_tcmds_interval_ms,1)!")
+    time.sleep(1)
+    # Equivalent for AX100: TCMD_handle_ax100_tcmds_interval_ms
 
 
 def _generate_left_pane_config_tab() -> list:
@@ -666,8 +687,16 @@ def _generate_left_pane_tools() -> list:
     return [
         html.Hr(),
         dbc.Button(
+            "Configure for Immediate Execution",
+            id="send-immediate-execution-tool-button",
+            n_clicks=0,
+            className="m-1 px-3",
+            style={"width": "auto"},
+            color="info",
+        ),
+        dbc.Button(
             "Send Time Sync Command",
-            id="send-time-sync-command-button",
+            id="send-time-sync-command-tool-button",
             n_clicks=0,
             className="m-1 px-3",
             style={"width": "auto"},
