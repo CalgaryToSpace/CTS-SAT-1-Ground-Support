@@ -6,7 +6,8 @@ def format_byte_as_hex(b: int) -> str:
 
     Example: 1 -> "[0x01]"
     """
-    return f"[0x{hex(b)[2:].upper().zfill(2)}]"
+    hex_part = f"{b:x}"
+    return f"[0x{hex_part.upper().zfill(2)}]"
 
 
 def bytes_to_nice_str(byte_obj: bytes, *, show_end_of_line_chars: bool) -> str:
