@@ -16,7 +16,7 @@ jobs:
           - os: ubuntu-latest
             python-version: "3.13"
 
-          # macOS and Windows should only run Python 3.11 (save compute power).
+          # macOS and Windows should only run Python 3.13 (save compute power).
           - os: macos-latest
             python-version: "3.13"
           - os: windows-latest
