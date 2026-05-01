@@ -250,7 +250,7 @@ if __name__ == "__main__":
         fw_repo_path = Path(sys.argv[1])
         sys.stderr.write(f"Using repo passed as CLI argument: {fw_repo_path}\n")
     else:
-        fw_repo_path = Path(input("Path to repo: "))
+        fw_repo_path = Path(input("Path to repo: ").strip())
 
     telecommands = parse_telecommand_list_from_repo(fw_repo_path)
 
