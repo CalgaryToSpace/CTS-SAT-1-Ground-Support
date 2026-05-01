@@ -1,7 +1,7 @@
 """Parse integer and string configuration variables from a configuration.c file.
 
 Extracts entries from CONFIG_int_config_variables[] and CONFIG_str_config_variables[],
-and enriches them with docstrings found in any C source files.
+and enriches them with docstrings and default values found in any C source files.
 """
 
 import dataclasses
@@ -10,6 +10,8 @@ import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+
+from simpleeval import simple_eval
 
 from cts1_ground_support.telecommand_array_parser import remove_c_comments
 
@@ -30,6 +32,7 @@ class IntConfigVariable:
     """Represents a single integer configuration variable."""
 
     variable_name: str
+    default_value: int | None = None
     docstring: str | None = None
 
 
@@ -43,6 +46,7 @@ class StrConfigVariable:
     # null-terminator in the length, so we subtract 1.
     max_length: int | None = None
 
+    default_value: str | None = None
     docstring: str | None = None
 
 
@@ -71,6 +75,63 @@ def extract_variable_docstring(variable_name: str, c_code: str) -> str | None:
     raw = match.group("docstring")
     lines = [line.strip().lstrip("/").strip() for line in raw.strip().splitlines()]
     return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Default value extraction
+# ---------------------------------------------------------------------------
+
+
+def extract_variable_default_value(variable_name: str, c_code: str) -> str | int | float | None:
+    """Return the initializer value assigned to *variable_name* in a global definition.
+
+    Looks for patterns like:
+        int32_t CONFIG_foo = 42;
+        float CONFIG_bar = 3.14f;
+        char CONFIG_baz[] = "hello";
+        const uint8_t CONFIG_x = MY_MACRO;
+
+    Handles optional ``extern`` / ``const`` qualifiers and C numeric suffixes
+    (``U``, ``L``, ``UL``, ``f``, etc.).  String literals are returned without
+    their surrounding quotes.  Numeric literals are cast to ``int`` or ``float``
+    as appropriate; anything else (e.g. a macro name) is returned as a plain
+    ``str``.
+
+    Returns ``None`` if no initializer is found.
+    """
+    pattern = re.compile(
+        rf"\w[\w\s]*\s+"  # type (one or more words)
+        rf"{re.escape(variable_name)}"
+        rf"\s*(?:\[\s*\])?"  # optional [] for char arrays
+        rf"\s*=\s*"  # assignment
+        rf"(?P<value>[^;]+)"  # everything up to the semicolon
+        rf"\s*;",
+        re.DOTALL,
+    )
+    match = pattern.search(c_code)
+    if match is None:
+        return None
+
+    raw = match.group("value").strip()
+
+    # String literal → strip quotes and return as str.
+    string_match = re.fullmatch(r'"(?P<s>(?:[^"\\]|\\.)*)"', raw)
+    if string_match:
+        return string_match.group("s")
+
+    # Numeric literal → strip C suffixes (U, L, UL, f, …) then try int/float.
+    numeric_raw = re.sub(r"[UuLlFf]+$", "", raw)
+    try:
+        return int(numeric_raw, 0)  # 0 base handles 0x… hex, 0… octal
+    except ValueError:
+        pass
+    try:
+        return float(numeric_raw)
+    except ValueError:
+        pass
+
+    # Fallback: macro name or complex expression — return as-is.
+    return raw
 
 
 # ---------------------------------------------------------------------------
@@ -166,7 +227,7 @@ def parse_str_config_array(c_code: str) -> list[StrConfigVariable]:
 
 
 # ---------------------------------------------------------------------------
-# High-level: parse arrays + enrich with docstrings
+# High-level: parse arrays + enrich with docstrings and default values
 # ---------------------------------------------------------------------------
 
 
@@ -174,28 +235,54 @@ def parse_config_variables(
     config_c_code: str,
     extra_c_sources: str = "",
 ) -> tuple[list[IntConfigVariable], list[StrConfigVariable]]:
-    """Parse both int and string config variable arrays, then attach docstrings.
+    """Parse both int and string config variable arrays, then attach docstrings and default values.
 
     Args:
         config_c_code:   Contents of configuration.c (or equivalent).
         extra_c_sources: Concatenated contents of any additional C files that
-                         may contain variable declarations with docstrings.
+                         may contain variable declarations with docstrings or
+                         default-value initializers.
 
     Returns:
         (int_vars, str_vars): lists of enriched config variable objects.
 
     """
     all_c = config_c_code + "\n" + extra_c_sources
+    # Strip comments once for default-value and docstring searches so that
+    # commented-out assignments are not accidentally matched.
+    all_c_no_comments = remove_c_comments(all_c)
 
     int_vars = parse_int_config_array(config_c_code)
     str_vars = parse_str_config_array(config_c_code)
 
     for var in int_vars:
+        default_value = extract_variable_default_value(var.variable_name, all_c_no_comments)
+        if isinstance(default_value, str):
+            # Evaluate expressions like "60 * 60".
+            default_value = simple_eval(default_value)
+
+        if not isinstance(default_value, int):
+            msg = (
+                f"Expected int value, got {type(default_value)} ({default_value!r}) "
+                f"for {var.variable_name}"
+            )
+            raise TypeError(msg)
+
+        var.default_value = default_value
         doc = extract_variable_docstring(var.variable_name, all_c)
         if doc:
             var.docstring = doc
 
     for var in str_vars:
+        default_value = extract_variable_default_value(var.variable_name, all_c_no_comments)
+        if not isinstance(default_value, str | None):
+            msg = (
+                f"Expected str value, got {type(default_value)} ({default_value!r}) "
+                f"for {var.variable_name}"
+            )
+            raise TypeError(msg)
+
+        var.default_value = default_value
         doc = extract_variable_docstring(var.variable_name, all_c)
         if doc:
             var.docstring = doc
