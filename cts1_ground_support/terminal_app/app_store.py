@@ -2,18 +2,18 @@
 
 import time
 from dataclasses import dataclass, field
-from pathlib import Path
 
 from sortedcontainers import SortedDict
 
+from cts1_ground_support.telecommand_types import TelecommandDefinition
 from cts1_ground_support.terminal_app.app_types import UART_PORT_NAME_DISCONNECTED, RxTxLogEntry
 
 
-@dataclass
+@dataclass(kw_only=True)
 class AppStore:
     """A singleton class to store the app's state (across all clients)."""
 
-    firmware_repo_path: Path | None = None
+    telecommand_definition_list: list[TelecommandDefinition] = field(default_factory=list)
 
     uart_port_name: str = UART_PORT_NAME_DISCONNECTED
 

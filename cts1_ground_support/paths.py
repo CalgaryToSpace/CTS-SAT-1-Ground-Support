@@ -4,6 +4,8 @@ from pathlib import Path
 
 import git
 
+BUNDLED_DATA_FOLDER_PATH = Path(__file__).parent / "bundled_data"
+
 
 def clone_firmware_repo(repo_parent_path: Path) -> tuple[Path, git.Repo]:
     """Clone the CTS-SAT-1-OBC-Firmware repository."""

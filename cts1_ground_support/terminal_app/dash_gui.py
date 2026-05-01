@@ -8,21 +8,20 @@ The main screen has the following components:
 """
 
 import argparse
-import functools
 import json
-import tempfile
 import time
 from pathlib import Path
 
 import dash
 import dash_bootstrap_components as dbc
 import dash_split_pane
+import orjson
 from dash import callback, dcc, html
 from dash.dependencies import Input, Output, State
 from loguru import logger
 from sortedcontainers import SortedDict
 
-from cts1_ground_support.paths import clone_firmware_repo
+from cts1_ground_support.paths import BUNDLED_DATA_FOLDER_PATH
 from cts1_ground_support.serial_util import list_serial_ports
 from cts1_ground_support.telecommand_array_parser import parse_telecommand_list_from_repo
 from cts1_ground_support.telecommand_preview import generate_telecommand_preview
@@ -40,19 +39,9 @@ UART_PORT_OPTION_LABEL_DISCONNECTED = "⛔ Disconnected ⛔"
 #            value comes from the app_store's latest connected port (esp on load).
 
 
-# TODO: Change this to a TTL cache so that it refreshes sometimes, maybe.
-@functools.lru_cache  # Cache forever is fine.
-def get_telecommand_list_from_repo_cached(repo_path: Path | None) -> list[TelecommandDefinition]:
-    """Get the telecommand list from a repo, and cache the result."""
-    if repo_path is None:
-        return []
-
-    return parse_telecommand_list_from_repo(repo_path)
-
-
 def get_telecommand_list_from_repo() -> list[TelecommandDefinition]:
     """Get the telecommand list from the repo, based on the app_store repo path."""
-    return get_telecommand_list_from_repo_cached(app_store.firmware_repo_path)
+    return app_store.telecommand_definition_list
 
 
 def get_telecommand_name_list() -> list[str]:
@@ -846,33 +835,47 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        if args.firmware_repo is None:
-            firmware_repo_path, repo = clone_firmware_repo(Path(tmp_dir))
-            logger.info(
-                "Cloned CTS-SAT-1-OBC-Firmware repo to temporary directory "
-                f"(commit={repo.head.commit.hexsha[0:7]}): {tmp_dir}"
-            )
-        else:
-            firmware_repo_path = Path(args.firmware_repo)
+    if args.firmware_repo is not None:
+        # If a repo was provided, load the telecommand list from there.
+        firmware_repo_path = Path(args.firmware_repo)
 
-            if not firmware_repo_path.is_dir():
-                msg = f"Provided CTS-SAT-1-OBC-Firmware repo not found: {args.firmware_repo}"
-                raise FileNotFoundError(msg)
+        if not firmware_repo_path.is_dir():
+            msg = f"Provided CTS-SAT-1-OBC-Firmware repo not found: {args.firmware_repo}"
+            raise FileNotFoundError(msg)
 
-            logger.info(f"Using provided CTS-SAT-1-OBC-Firmware repo: {args.firmware_repo}")
+        logger.info(f"Using provided CTS-SAT-1-OBC-Firmware repo: {args.firmware_repo}")
 
-        app_store.firmware_repo_path = firmware_repo_path
+        app_store.telecommand_definition_list = parse_telecommand_list_from_repo(
+            firmware_repo_path
+        )
 
         logger.info(
-            f"CTS-SAT-1-OBC-Firmware repo contains {len(get_telecommand_name_list())} "
-            "telecommands."
+            f"Loaded {len(app_store.telecommand_definition_list)} telecommands from firmware repo."
         )
 
-        run_dash_app(
-            enable_debug=args.debug,
-            enable_advanced=args.advanced,
-        )
+    else:
+        # For performance, load the telecommand list from the JSON file bundled in this repo.
+        # This bundled file is generated with `telecommand_array_parser.py`, run as a CLI tool:
+        # uv run cts1_ground_support/telecommand_array_parser.py ../CTS-SAT-1-OBC-Firmware/ | tee cts1_ground_support/bundled_data/cts_sat_1_telecommand_list.json  # noqa: E501
+        bundled_tcmd_json_path = BUNDLED_DATA_FOLDER_PATH / "cts_sat_1_telecommand_list.json"
+        if not bundled_tcmd_json_path.is_file():
+            msg = (
+                f"Could not find bundled telecommand list file: {bundled_tcmd_json_path}. "
+                "You can fix the issue or run with the `--repo` option."
+            )
+            raise FileNotFoundError(msg)
+        tcmd_list_of_dicts = orjson.loads(bundled_tcmd_json_path.read_bytes())
+        app_store.telecommand_definition_list = [
+            TelecommandDefinition(**tcmd_dict) for tcmd_dict in tcmd_list_of_dicts
+        ]
+        del bundled_tcmd_json_path, tcmd_list_of_dicts
+
+        logger.info(f"Loaded {len(app_store.telecommand_definition_list)} bundled telecommands.")
+
+    run_dash_app(
+        enable_debug=args.debug,
+        enable_advanced=args.advanced,
+    )
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 """Types related to storing telecommand definitions."""
 
+import dataclasses
 from dataclasses import dataclass
 
 
@@ -51,4 +52,11 @@ class TelecommandDefinition:
                 self.number_of_args is not None,
                 self.readiness_level is not None,
             ]
+        )
+
+    @classmethod
+    def from_dict(cls, data: dict[str, str | int | list[str] | None]) -> "TelecommandDefinition":
+        """Create a TelecommandDefinition from a dictionary."""
+        return cls(
+            **{f.name: data[f.name] for f in dataclasses.fields(cls) if f.name in data},  # pyright: ignore[reportArgumentType]
         )
