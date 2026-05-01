@@ -1,0 +1,170 @@
+{
+  "int_config_variables": [
+    {
+      "variable_name": "CONFIG_int_demo_var_1",
+      "default_value": 13345,
+      "docstring": "@brief Does nothing. Used for testing configuration variables."
+    },
+    {
+      "variable_name": "CONFIG_EPS_enable_uart_debug_print",
+      "default_value": 0,
+      "docstring": "@brief When enabled, the EPS's raw data is sent to the debug UART."
+    },
+    {
+      "variable_name": "TASK_heartbeat_period_ms",
+      "default_value": 10990,
+      "docstring": "@brief The period of the heartbeat task, in milliseconds. 0 to disable."
+    },
+    {
+      "variable_name": "EPS_monitor_interval_ms",
+      "default_value": 20000,
+      "docstring": "@brief The interval at which the `EPS_monitor_and_disable_overcurrent_channels` task runs."
+    },
+    {
+      "variable_name": "EPS_monitor_safety_adcs_interval_ms",
+      "default_value": 20000,
+      "docstring": "@brief Check whether the EPS is in safety mode. If it's in safety mode, disable all EPS power channels.\n@note Default: 20000 ms = 20 seconds\n@note Set to 0 to disable this feature."
+    },
+    {
+      "variable_name": "EPS_time_sync_period_sec",
+      "default_value": 600,
+      "docstring": "@brief How frequently to set the OBC time based on the EPS time if the time divergence is >2 seconds.\n@note Default: 600 seconds = 10 minutes.\n@note Set to 0 to disable time syncing."
+    },
+    {
+      "variable_name": "EPS_max_time_deviation_for_sync_ms",
+      "default_value": 2000,
+      "docstring": "@brief If the OBC time and EPS time differ by more than this value, the OBC time will be set based on the EPS time.\n@note Default: 2000 ms = 2 seconds.\n@note Strongly related to EPS_time_sync_period_sec.\n@note Recommendation: Do not set to < 1500-2000ms, as the EPS time is only granular to 1 second."
+    },
+    {
+      "variable_name": "STM32_system_reset_interval_sec",
+      "default_value": 604800,
+      "docstring": "@brief If the system uptime exceeds this value, the system will reset (reboot).\n@note This is to recover the system in case of a radiation-induced hang or other invalid state.\n@note Default: 604800 sec = 7 days.\n@note Set to 0 to disable this feature."
+    },
+    {
+      "variable_name": "STM32_system_reset_no_uplink_interval_sec",
+      "default_value": 216000,
+      "docstring": "@brief If the duration since an AX100 uplink telecommand exceeds this value, the system will reset (reboot).\n@note This is to recover the system in case of a radiation-induced hang or other invalid state.\n@note Default: 216000 sec = 2.5 days.\n@note Set to 0 to disable this feature."
+    },
+    {
+      "variable_name": "LOG_file_flush_interval_sec",
+      "default_value": 60,
+      "docstring": "@brief Interval in seconds at which to flush the log file to the filesystem.\n@note Nominal: 60 seconds = 1 minute."
+    },
+    {
+      "variable_name": "LOG_file_rotation_interval_sec",
+      "default_value": 1800,
+      "docstring": "@brief Interval in seconds where a new dated log file is created, and the old file is closed\n@note Nominal: 1800 seconds = 30 minutes."
+    },
+    {
+      "variable_name": "COMMS_beacon_interval_ms",
+      "default_value": 20000,
+      "docstring": "@brief Interval between basic beacon packets, in ms.\n@note Default: 20000 ms = 20 seconds (fastest rate we're globally authorized for)."
+    },
+    {
+      "variable_name": "LOG_timestamp_prefix_format",
+      "default_value": 0,
+      "docstring": "@brief Format for the timestamp prefix.\n@details Options:\n- 0=synctime+offset\n- 1=ISO8601-like datetime with ms\n- 2=ISO8601-like datetime without ms\n- other=synctime+offset (fallback)\n@note Configurable with the configuration telecommand.\n@note Could be an enum in a perfect world, but using int for speed of implementation."
+    },
+    {
+      "variable_name": "TCMD_enqueue_from_agenda_file_interval_ms",
+      "default_value": 45000,
+      "docstring": "@brief Interval between enqueuing telecommands from the agenda file, in ms.\n@note Default: 45000 ms = 45 seconds"
+    },
+    {
+      "variable_name": "TCMD_enqueue_grace_period_ms",
+      "default_value": 15000,
+      "docstring": "@brief When enqueuing telecommands from a file, gracefully handle time resync values <= this value.\n@note Default: 15000 ms = 15 seconds\n@note If the time resync is more than this value, then a chunk of the agenda file will be discarded,\nor commands may be re-enqueued and re-executed."
+    },
+    {
+      "variable_name": "AX100_enable_downlink_uart_logs",
+      "default_value": 0,
+      "docstring": "@brief When enabled, the radio packets will be sent to the Debug UART for debugging purposes.\n@note Only useful for configuration in ground testing."
+    },
+    {
+      "variable_name": "AX100_enable_downlink_inhibited_uart_logs",
+      "default_value": 1,
+      "docstring": "@brief When enabled, log messages like \"Downlink inhibited: ...\" will be sent to the Debug UART.\n@note Logs are important to ensure that radio downlinks aren't sent before the antenna is deployed.\nThese logs get very annoying though, so they can be turned off with this variable.\n@note Only useful for configuration in ground testing."
+    },
+    {
+      "variable_name": "TCMD_handle_umbilical_tcmds_interval_ms",
+      "default_value": 400,
+      "docstring": "@brief The interval between handling telecommands (parsing and adding to agenda) from the umbilical UART.\n@details Any value from 1ms to millions is reasonable. 20ms is a good value for optimized bulk uplink.\nNote: Does not include execution."
+    },
+    {
+      "variable_name": "TCMD_handle_ax100_tcmds_interval_ms",
+      "default_value": 400,
+      "docstring": "@brief The interval between handling telecommands (parsing and adding to agenda) uplinked via the UHF radio.\nNote: Does not include execution.\nDecrease this to 200ms-250ms (or lower) if bulk uplinking large amounts of data (e.g., firmware)."
+    },
+    {
+      "variable_name": "TCMD_require_valid_sha256",
+      "default_value": 0,
+      "docstring": "@brief Boolean. When 1, the telecommand parser will require a valid SHA256 hash in the telecommand string."
+    },
+    {
+      "variable_name": "TCMD_require_unique_tssent",
+      "default_value": 0,
+      "docstring": "@brief Boolean. Whether to require the `@tssent` suffix tag for all telecommands.\n@details 1 = require, 0 = don't require"
+    },
+    {
+      "variable_name": "TCMD_max_consecutive_burst_execution_size",
+      "default_value": 3,
+      "docstring": "@brief Execute this many telecommands back-to-back when they come due, if they're available.\n@details Increase this past 3 to execute commands faster (e.g., during bulk uplink).\n@note Default: 3."
+    },
+    {
+      "variable_name": "COMMS_bulk_downlink_delay_per_packet_ms",
+      "default_value": 208,
+      "docstring": "@brief The period to wait between downlink packets.\n@note A 250-byte packet at 9600 baud takes about 208 ms to transmit.\n@example If you reconfigure the AX100 and increase the baudrate of the radio, decrease this value."
+    },
+    {
+      "variable_name": "COMMS_uptime_to_start_ant_deployment_sec",
+      "default_value": 3600,
+      "docstring": "@brief The uptime, as defined in the Launch Provider ICD, at which the antennas should be deployed."
+    },
+    {
+      "variable_name": "COMMS_max_duration_without_uplink_before_setting_default_rf_switch_mode_sec",
+      "default_value": 900,
+      "docstring": "@brief If the satellite goes this long without receiving an uplink, the\n`COMMS_rf_switch_control_mode` will be set back to `TOGGLE_BEFORE_EVERY_BEACON`."
+    },
+    {
+      "variable_name": "MPI_max_temperature_shutoff_celcius",
+      "default_value": 60,
+      "docstring": "@brief If the MPI exceeds this value during data recording, recording will be disabled.\n@note Set this value to 0 (via configuration) to disable the temperature shutoff feature."
+    },
+    {
+      "variable_name": "MPI_max_recording_duration_sec",
+      "default_value": 900,
+      "docstring": "@brief Maximum duration for MPI data recording in seconds.\n@note Set this value to 0 (via configuration) to disable the duration limit.\n@note This configuration variable is designed to prevent against an operator failing to\nschedule a stop telecommand for MPI data recording."
+    },
+    {
+      "variable_name": "GNSS_write_cmd_mode_data_to_firehose_file",
+      "default_value": 1,
+      "docstring": "@brief Boolean. Whether to store command-mode GNSS data to the firehose file.\n@details If GNSS firehose storage mode is enabled, and the send_cmd_get_response\nfunction is used, this config variable controls whether the command-mode\nresponse data is written to the firehose file."
+    }
+  ],
+  "str_config_variables": [
+    {
+      "variable_name": "CONFIG_str_demo_var_1",
+      "max_length": 24,
+      "default_value": "CONFIG_str_demo_var_1",
+      "docstring": null
+    },
+    {
+      "variable_name": "CONFIG_str_demo_var_2",
+      "max_length": 49,
+      "default_value": "CONFIG_str_demo_var_2",
+      "docstring": null
+    },
+    {
+      "variable_name": "COMMS_beacon_friendly_message_str",
+      "max_length": 41,
+      "default_value": "Hello from CalgaryToSpace FrontierSat",
+      "docstring": null
+    },
+    {
+      "variable_name": "TCMD_active_agenda_filename",
+      "max_length": 199,
+      "default_value": "default_tcmd_agenda.txt",
+      "docstring": "@brief The file path of the agenda file to load upcoming telecommands from.\n@warning While a default agenda is set, it is critical to understand that you SHOULD NOT\nfill this agenda file unless absolutely necessary. If you create and fill an agenda\nwith this default name, it will run on every boot, thus defeating the purpose of\nreboots being a stable, fail-safe startup mode.\n@note If system stability ends up being super bad, you can put commands in the default to run at\nthe earth poles on subsequent reboots. That's probably the only time you should ever\ncreate this file though!\n@note Nominally, put the agenda in another random file, then update this config string to point\nto that other file. That way, on reboot, the agenda stops running (as a fail-safe)!\n@note Set this to \"DISABLED\" (case-sensitive) to disable this feature entirely."
+    }
+  ]
+}

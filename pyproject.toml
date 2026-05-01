@@ -30,9 +30,9 @@ dependencies = [
   "dash-split-pane>=1,<2",
   "pytz",
   "orjson>3,<4",
-
   # sortedcontainers provides SortedDict for efficiency.
   "sortedcontainers>=2.4.0,<3",
+  "simpleeval>=1.0.7",
 ]
 
 [dependency-groups]
