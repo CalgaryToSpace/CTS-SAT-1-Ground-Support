@@ -99,10 +99,11 @@ def extract_variable_default_value(variable_name: str, c_code: str) -> str | int
 
     Returns ``None`` if no initializer is found.
     """
+    # Explore: https://regex101.com/?regex=%5Cw%5B%5Cw%5Cs%5D*%5Cs%2Bvariable_name%5Cs*%28%3F%3A%5C%5B%5Cs*%5Cw*%5Cs*%5C%5D%29%3F%5Cs*%3D%5Cs*%28%3FP%3Cvalue%3E%5B%5E%3B%5D%2B%29%5Cs*%3B%0A&testString=%0A++++++++int32_t+variable_name+%3D+42%3B%0A++++++++float+variable_name+%3D+3.14f%3B%0A++++++++char+variable_name%5B98231%5D+%3D+++%22hello%22%3B%0A++++++++const+uint8_t+variable_name+%3D+MY_MACRO%3B%0A++++++++&flags=gmui&flavor=python&delimiter=%22
     pattern = re.compile(
         rf"\w[\w\s]*\s+"  # type (one or more words)
         rf"{re.escape(variable_name)}"
-        rf"\s*(?:\[\s*\])?"  # optional [] for char arrays
+        rf"\s*(?:\[\s*\w*\s*\])?"  # optional [] for char arrays
         rf"\s*=\s*"  # assignment
         rf"(?P<value>[^;]+)"  # everything up to the semicolon
         rf"\s*;",
@@ -114,10 +115,9 @@ def extract_variable_default_value(variable_name: str, c_code: str) -> str | int
 
     raw = match.group("value").strip()
 
-    # String literal → strip quotes and return as str.
-    string_match = re.fullmatch(r'"(?P<s>(?:[^"\\]|\\.)*)"', raw)
-    if string_match:
-        return string_match.group("s")
+    # String literal: strip quotes and return as str.
+    if raw.startswith('"') and raw.endswith('"'):
+        return raw[1:-1]
 
     # Numeric literal → strip C suffixes (U, L, UL, f, …) then try int/float.
     numeric_raw = re.sub(r"[UuLlFf]+$", "", raw)

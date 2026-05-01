@@ -145,25 +145,25 @@
     {
       "variable_name": "CONFIG_str_demo_var_1",
       "max_length": 24,
-      "default_value": null,
+      "default_value": "CONFIG_str_demo_var_1",
       "docstring": null
     },
     {
       "variable_name": "CONFIG_str_demo_var_2",
       "max_length": 49,
-      "default_value": null,
+      "default_value": "CONFIG_str_demo_var_2",
       "docstring": null
     },
     {
       "variable_name": "COMMS_beacon_friendly_message_str",
       "max_length": 41,
-      "default_value": null,
+      "default_value": "Hello from CalgaryToSpace FrontierSat",
       "docstring": null
     },
     {
       "variable_name": "TCMD_active_agenda_filename",
       "max_length": 199,
-      "default_value": null,
+      "default_value": "default_tcmd_agenda.txt",
       "docstring": "@brief The file path of the agenda file to load upcoming telecommands from.\n@warning While a default agenda is set, it is critical to understand that you SHOULD NOT\nfill this agenda file unless absolutely necessary. If you create and fill an agenda\nwith this default name, it will run on every boot, thus defeating the purpose of\nreboots being a stable, fail-safe startup mode.\n@note If system stability ends up being super bad, you can put commands in the default to run at\nthe earth poles on subsequent reboots. That's probably the only time you should ever\ncreate this file though!\n@note Nominally, put the agenda in another random file, then update this config string to point\nto that other file. That way, on reboot, the agenda stops running (as a fail-safe)!\n@note Set this to \"DISABLED\" (case-sensitive) to disable this feature entirely."
     }
   ]
