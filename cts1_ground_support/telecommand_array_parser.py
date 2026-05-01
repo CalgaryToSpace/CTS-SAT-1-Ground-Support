@@ -2,6 +2,7 @@
 
 import json
 import re
+import sys
 from pathlib import Path
 
 from cts1_ground_support.paths import read_text_file
@@ -244,6 +245,14 @@ def parse_telecommand_list_from_repo(repo_path: Path) -> list[TelecommandDefinit
 
 
 if __name__ == "__main__":
-    # Do a demo of the `parse_telecommand_array_table` function
-    telecommands = parse_telecommand_list_from_repo(Path(input("Path to repo: ")))
-    print(json.dumps([tcmd.to_dict() for tcmd in telecommands], indent=2))  # noqa: T201
+    # Do a demo of the `parse_telecommand_list_from_repo` function.
+    if len(sys.argv) > 1:
+        fw_repo_path = Path(sys.argv[1])
+        sys.stderr.write(f"Using repo passed as CLI argument: {fw_repo_path}\n")
+    else:
+        fw_repo_path = Path(input("Path to repo: "))
+
+    telecommands = parse_telecommand_list_from_repo(fw_repo_path)
+
+    # Print out to stdout.
+    sys.stdout.write(json.dumps([tcmd.to_dict() for tcmd in telecommands], indent=2) + "\n")

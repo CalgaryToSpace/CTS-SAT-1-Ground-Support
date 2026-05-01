@@ -1,0 +1,2599 @@
+[
+  {
+    "name": "hello_world",
+    "tcmd_func": "TCMDEXEC_hello_world",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief A simple telecommand that responds with \"Hello, world!\" (log message and TCMD response)\n@param args_str No arguments expected\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0 if successful, >0 if an error occurred (but hello_world can't return an error)",
+    "argument_descriptions": []
+  },
+  {
+    "name": "obc_firmware_version",
+    "tcmd_func": "TCMDEXEC_obc_firmware_version",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the currently-running OBC Firmware Version (build date/time, comment).\n@param args_str No arguments.\n@return 0 on success (cannot fail).",
+    "argument_descriptions": []
+  },
+  {
+    "name": "core_system_stats",
+    "tcmd_func": "TCMDEXEC_core_system_stats",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get many essential system stats as a JSON dict.\n@param args_str No arguments.\n@return 0 on success. Cannot fail.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "get_all_system_thermal_info",
+    "tcmd_func": "TCMDEXEC_get_all_system_thermal_info",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get a variety of system thermal info as JSON.\n@param args_str No arguments.\n@return 0 on success.\n@note Fields include OBC temp, antenna temps, solar panel generation, battery info.\n@note The EPS_CHANNEL_3V3_UHF_ANTENNA_DEPLOY channel is powered off after,\neven if it was powered on previously. Totally safe, but just an FYI.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "get_system_time",
+    "tcmd_func": "TCMDEXEC_get_system_time",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": null,
+    "argument_descriptions": null
+  },
+  {
+    "name": "set_system_time_approx",
+    "tcmd_func": "TCMDEXEC_set_system_time_approx",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Set the system time to the provided Unix epoch time in milliseconds.\n@param args_str\n- Arg 0: Unix epoch time in milliseconds (uint64_t)\n@return 0 if successful, 1 if error\n@note This function is the naive/basic implementation that doesn't account for a delay\nbetween telecommand reception and execution.",
+    "argument_descriptions": [
+      "Unix epoch time in milliseconds (uint64_t)"
+    ]
+  },
+  {
+    "name": "set_system_time",
+    "tcmd_func": "TCMDEXEC_set_system_time",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Set the system time to the provided Unix epoch time in milliseconds\n@param args_str\n- Arg 0: Unix epoch time in milliseconds (uint64_t)\n@return 0 if successful, 1 if error\n@note This function accounts for the unpredictable delay between telecommand reception and execution.",
+    "argument_descriptions": [
+      "Unix epoch time in milliseconds (uint64_t)"
+    ]
+  },
+  {
+    "name": "correct_system_time",
+    "tcmd_func": "TCMDEXEC_correct_system_time",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Adjust the system time by a correction offset in ms.\n@param args_str\n- Arg 0: Correction time in milliseconds (int64_t). Positive = forward in time, negative = backward in time.\n@return 0 if successful, 1 if error\n@note Math: new_system_time_ms = current_system_time_ms + correction_time_ms",
+    "argument_descriptions": [
+      "Correction time in milliseconds (int64_t). Positive = forward in time, negative = backward in time."
+    ]
+  },
+  {
+    "name": "set_eps_time_based_on_obc_time",
+    "tcmd_func": "TCMDEXEC_set_eps_time_based_on_obc_time",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Sync's eps time to obc time (+/- 1 second)\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "set_obc_time_based_on_eps_time",
+    "tcmd_func": "TCMDEXEC_set_obc_time_based_on_eps_time",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Sync's obc time to eps time (+/- 1 second)\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "set_obc_time_based_on_gnss_time",
+    "tcmd_func": "TCMDEXEC_set_obc_time_based_on_gnss_time",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Sync OBC time based on the GNSS time report (+/- ~100ms, based on system latency).\n@param args_str No arguments.\n@return 0 on success, >0 on failure.\n@note Requires that the GNSS receiver's EPS channel is already powered on, and that a time fix is ready.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "set_obc_time_based_on_gnss_pps",
+    "tcmd_func": "TCMDEXEC_set_obc_time_based_on_gnss_pps",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Corrects the OBC time based on the GNSS PPS signal. Very precise.\n@param args_str No arguments.\n@return 0 on success, >0 on failure.\n@note Requires that the GNSS receiver's EPS channel is already powered on, and that a time fix is ready.\n@note Requires an accurate GNSS time fix, and requires that `set_obc_time_based_on_gnss_time` has been\nrun recently (or that the OBC time is correct within 500ms based on another time source).",
+    "argument_descriptions": []
+  },
+  {
+    "name": "available_telecommands",
+    "tcmd_func": "TCMDEXEC_available_telecommands",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": null,
+    "argument_descriptions": null
+  },
+  {
+    "name": "reboot",
+    "tcmd_func": "TCMDEXEC_reboot",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Reboot the OBC. Unmounts the filesystem first for safety.\n@param args_str\n@param response_output_buf\n@param response_output_buf_len\n@return",
+    "argument_descriptions": []
+  },
+  {
+    "name": "exec_blob_from_fs",
+    "tcmd_func": "TCMDEXEC_exec_blob_from_fs",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_RECOVERY_OR_EXPERT",
+    "full_docstring": "@brief Executes an arbitrary blob/program from the filesystem.\n@param args_str\n- Arg 0: File name of the blob\n- Arg 1: Where to load blob (0=malloc, 1=mpi_buffer_one, 2=mpi_buffer_two)\n- Arg 2: Argument to pass to the blob function (e.g., another filename)\n@param response_output_buf The blob optionally writes its intermediate workings and results to this buffer.\n@return 99 on pre-blob execution error. Otherwise, blob return value (presumably 0 on success).\n@details Refer to `misc_tools/exec_blob/README.md` for more information on how to use this complex telecommand.",
+    "argument_descriptions": [
+      "File name of the blob",
+      "Where to load blob (0=malloc, 1=mpi_buffer_one, 2=mpi_buffer_two)",
+      "Argument to pass to the blob function (e.g., another filename)"
+    ]
+  },
+  {
+    "name": "scan_i2c_bus",
+    "tcmd_func": "TCMDEXEC_scan_i2c_bus",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Scans the I2C bus for devices. Prints out the addresses of devices found.\n@param args_str\n- Arg 0: I2C bus to scan (1-4)\n@return 0 if successful, 1 if error.",
+    "argument_descriptions": [
+      "I2C bus to scan (1-4)"
+    ]
+  },
+  {
+    "name": "scan_i2c_bus_verbose",
+    "tcmd_func": "TCMDEXEC_scan_i2c_bus_verbose",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Scans the I2C bus for devices. Prints out a grid of all devices, with addresses for those found.\n@param args_str\n- Arg 0: I2C bus to scan (1-4)\n@return 0 if successful, 1 if error.",
+    "argument_descriptions": [
+      "I2C bus to scan (1-4)"
+    ]
+  },
+  {
+    "name": "system_self_check_failures_as_json",
+    "tcmd_func": "TCMDEXEC_system_self_check_failures_as_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief System self-check of all peripherals and systems.\n@param args_str No arguments expected\n@param response_output_buf Buffer is filled with a JSON list of strings of the FAILING checks\n@return 0 regardless; see the response_output_buf for the results of the self-check.\n@note Output is a JSON list of the failing checks (as strings). Returns 0 regardless.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "system_self_check_as_json",
+    "tcmd_func": "TCMDEXEC_system_self_check_as_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief System self-check of all peripherals and systems.\n@param args_str No arguments expected\n@param response_output_buf Buffer is filled with a JSON list of strings of the FAILING checks\n@return 0 regardless; see the response_output_buf for the results of the self-check.\n@note Output is a JSON list of the failing checks (as strings). Returns 0 regardless.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "obc_get_rbf_state",
+    "tcmd_func": "TCMDEXEC_obc_get_rbf_state",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": null,
+    "argument_descriptions": null
+  },
+  {
+    "name": "uart_send_hex",
+    "tcmd_func": "TCMDEXEC_uart_send_hex",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Send arbitrary commands to a UART peripheral.\n@param args_str\n- Arg 0: UART port name to send data to: MPI, GNSS, CAMERA, EPS (case insensitive)\n- Arg 1: Data to be sent (bytes specified as hex)\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0: Success\n@note This function doesn't toggle the EPS power lines for peripherals nor\nthe MPI's UART transceiver. Ensure they are powered on before using this function.",
+    "argument_descriptions": [
+      "UART port name to send data to: MPI, GNSS, CAMERA, EPS (case insensitive)",
+      "Data to be sent (bytes specified as hex)"
+    ]
+  },
+  {
+    "name": "uart_send_str",
+    "tcmd_func": "TCMDEXEC_uart_send_str",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Send arbitrary commands to a UART peripheral.\n@param args_str\n- Arg 0: UART port name to send data to: MPI, GNSS, CAMERA, EPS (case insensitive)\n- Arg 1: Data to be sent (bytes specified as a string)\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0: Success\n@note This function doesn't toggle the EPS power lines for peripherals nor\nthe MPI's UART transceiver. Ensure they are powered on before using this function.",
+    "argument_descriptions": [
+      "UART port name to send data to: MPI, GNSS, CAMERA, EPS (case insensitive)",
+      "Data to be sent (bytes specified as a string)"
+    ]
+  },
+  {
+    "name": "uart_send_hex_get_response_hex",
+    "tcmd_func": "TCMDEXEC_uart_send_hex_get_response_hex",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Send arbitrary commands to a UART peripheral, and receive the response.\n@param args_str\n- Arg 0: UART port name to send data to: MPI, GNSS, CAMERA, EPS (case insensitive)\n- Arg 1: Data to be sent (bytes specified as hex)\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0: Success, 1: Error parsing args, 2: Invalid uart port requested, 3: Error transmitting data,\n4: Error receiving data, 5: Timeout waiting for response / No response, 6: Peripheral specific error,\n7: Unhandled error\n@note This function doesn't toggle the EPS power lines for peripherals. Ensure they are powered on before\nusing this function.\n@note The camera UART port does not support receiving data in the function. TX only.",
+    "argument_descriptions": [
+      "UART port name to send data to: MPI, GNSS, CAMERA, EPS (case insensitive)",
+      "Data to be sent (bytes specified as hex)"
+    ]
+  },
+  {
+    "name": "uart_get_last_rx_times_json",
+    "tcmd_func": "TCMDEXEC_uart_get_last_rx_times_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get a JSON dict of how long, in ms, SINCE each UART ISR handler was last triggered.\n@note Uses placeholder \"-99\" to mean \"never triggered\". A value of 50 means that handler was last\ntriggered 50ms ago.\n@note Intended for debugging and testing purposes, but safe to use in flight also.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "uart_get_errors_json",
+    "tcmd_func": "TCMDEXEC_uart_get_errors_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": null,
+    "argument_descriptions": null
+  },
+  {
+    "name": "uart_set_baud_rate",
+    "tcmd_func": "TCMDEXEC_uart_set_baud_rate",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Set the STM32 UART peripheral's baud rate to a different value.\n@param args_str\n- Arg 0: UART port name to set the baud rate for: MPI, GNSS, CAMERA, EPS, AX100, DEBUG (case insensitive)\n- Arg 1: Baud rate to set the STM32 UART peripheral to (in bits per second). Common values are 9600, 115200, 230400, etc.\n@note This does not command the subsystem device to change its baud rate. This only updates the STM32.\n@example If the GNSS receiver does a factory reset, its baud rate is set to a different value. This command\ncan be used to change the STM32's UART baud rate to match the GNSS receiver's default baud rate to recover it.",
+    "argument_descriptions": [
+      "UART port name to set the baud rate for: MPI, GNSS, CAMERA, EPS, AX100, DEBUG (case insensitive)",
+      "Baud rate to set the STM32 UART peripheral to (in bits per second). Common values are 9600, 115200, 230400, etc."
+    ]
+  },
+  {
+    "name": "echo_back_args",
+    "tcmd_func": "TCMDEXEC_echo_back_args",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief A demo telecommand that echoes back the argument it received.\n@param args_str\n- Arg 0: The string to echo back.",
+    "argument_descriptions": [
+      "The string to echo back."
+    ]
+  },
+  {
+    "name": "echo_back_uint32_args",
+    "tcmd_func": "TCMDEXEC_echo_back_uint32_args",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief A demo telecommand that echoes back each integer argument it received.\n@param args_str 3 integer arguments to echo back.\n- Arg 0: The first integer to echo back.\n- Arg 1: The second integer to echo back.\n- Arg 2: The third integer to echo back.\n@return 0 if all ints are parsed successfully, otherwise the error code of the first failed parse.",
+    "argument_descriptions": [
+      "The first integer to echo back.",
+      "The second integer to echo back.",
+      "The third integer to echo back."
+    ]
+  },
+  {
+    "name": "run_all_unit_tests",
+    "tcmd_func": "TCMDEXEC_run_all_unit_tests",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": null,
+    "argument_descriptions": null
+  },
+  {
+    "name": "demo_blocking_delay",
+    "tcmd_func": "TCMDEXEC_demo_blocking_delay",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Delay for a specified number of milliseconds, for testing purposes, using HAL_Delay.\n@param args_str 1 argument: delay_ms (uint64_t)\n- Arg 0: delay_ms (uint64_t) - The number of milliseconds to delay for. <=300_000ms.\n@return 0 on success, 1 on error\n@note This is most useful for testing/triggering the watchdog timer.",
+    "argument_descriptions": [
+      "delay_ms (uint64_t) - The number of milliseconds to delay for. <=300_000ms."
+    ]
+  },
+  {
+    "name": "demo_os_delay",
+    "tcmd_func": "TCMDEXEC_demo_os_delay",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Delay for a specified number of milliseconds, for testing purposes, using osDelay.\n@param args_str 1 argument: delay_ms (uint64_t)\n- Arg 0: delay_ms (uint64_t) - The number of milliseconds to delay for. <=300_000ms.\n@return 0 on success, 1 on error\n@note This is most useful for testing/triggering the watchdog timer.",
+    "argument_descriptions": [
+      "delay_ms (uint64_t) - The number of milliseconds to delay for. <=300_000ms."
+    ]
+  },
+  {
+    "name": "config_set_int_var",
+    "tcmd_func": "TCMDEXEC_config_set_int_var",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Set an integer configuration variable\n@param args_str\n- Arg 0: variable name\n- Arg 1: new value\n@param response_output_buf Buffer to write the response to\n@param response_output_buf_len Max length of the buffer\n@return 0 if successful, >0 if an error occurred",
+    "argument_descriptions": [
+      "variable name",
+      "new value"
+    ]
+  },
+  {
+    "name": "config_set_str_var",
+    "tcmd_func": "TCMDEXEC_config_set_str_var",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Set a string configuration variable\n@param args_str\n- Arg 0: variable name\n- Arg 1: new value\n@return 0 if successful, >0 if an error occurred",
+    "argument_descriptions": [
+      "variable name",
+      "new value"
+    ]
+  },
+  {
+    "name": "config_get_int_var_json",
+    "tcmd_func": "TCMDEXEC_config_get_int_var_json",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get an integer configuration variable\n@param args_str\n- Arg 0: variable name\n@return 0 if successful, >0 if an error occurred",
+    "argument_descriptions": [
+      "variable name"
+    ]
+  },
+  {
+    "name": "config_get_str_var_json",
+    "tcmd_func": "TCMDEXEC_config_get_str_var_json",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get a string configuration variable\n@param args_str\n- Arg 0: variable name\n@return 0 if successful, >0 if an error occurred",
+    "argument_descriptions": [
+      "variable name"
+    ]
+  },
+  {
+    "name": "config_get_all_vars_jsonl",
+    "tcmd_func": "TCMDEXEC_config_get_all_vars_jsonl",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get all configuration variables, as JSON. One variable per line.\n@param args_str No arguments.\n@return 0 if successful, >0 if an error occurred",
+    "argument_descriptions": []
+  },
+  {
+    "name": "config_get_all_int_vars_json",
+    "tcmd_func": "TCMDEXEC_config_get_all_int_vars_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get all int configuration variables, as JSON. Each variable is a key-value pair in a single JSON dict.\n@param args_str No arguments.\n@return 0 if successful, >0 if an error occurred",
+    "argument_descriptions": []
+  },
+  {
+    "name": "flash_activate_each_cs",
+    "tcmd_func": "TCMDEXEC_flash_activate_each_cs",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Telecommand: Read bytes as hex from a flash address\n@param args_str No args.\n@return 0 always",
+    "argument_descriptions": []
+  },
+  {
+    "name": "flash_each_is_reachable",
+    "tcmd_func": "TCMDEXEC_flash_each_is_reachable",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Read bytes as hex from a flash address\n@param args_str No args.\n@return 0 always",
+    "argument_descriptions": []
+  },
+  {
+    "name": "flash_read_hex",
+    "tcmd_func": "TCMDEXEC_flash_read_hex",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Read bytes as hex from a page number\n@param args_str\n- Arg 0: Chip Number (CS number) as uint\n- Arg 1: Page number as uint\n- Arg 2: Number of bytes to read as uint\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Chip Number (CS number) as uint",
+      "Page number as uint",
+      "Number of bytes to read as uint"
+    ]
+  },
+  {
+    "name": "flash_write_hex",
+    "tcmd_func": "TCMDEXEC_flash_write_hex",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Telecommand: Write a hex string of bytes to a page number\n@param args_str\n- Arg 0: Chip Number (CS number) as uint\n- Arg 1: Page number as uint\n- Arg 2: Hex string of bytes to write (any case, allows space/underscore separators)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Chip Number (CS number) as uint",
+      "Page number as uint",
+      "Hex string of bytes to write (any case, allows space/underscore separators)"
+    ]
+  },
+  {
+    "name": "flash_erase",
+    "tcmd_func": "TCMDEXEC_flash_erase",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Telecommand: Erase a block of flash memory containing the given page number.\n@param args_str\n- Arg 0: Chip Number (CS number) as uint\n- Arg 1: Page number as uint\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Chip Number (CS number) as uint",
+      "Page number as uint"
+    ]
+  },
+  {
+    "name": "flash_benchmark_erase_write_read",
+    "tcmd_func": "TCMDEXEC_flash_benchmark_erase_write_read",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Telecommand: Benchmarks the erase/write/read operations on the flash memory module.\n@param args_str\n- Arg 0: Chip Number (CS number) as uint\n- Arg 1: Test Data Address as uint\n- Arg 2: Test Data Length as uint\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Chip Number (CS number) as uint",
+      "Test Data Address as uint",
+      "Test Data Length as uint"
+    ]
+  },
+  {
+    "name": "flash_reset",
+    "tcmd_func": "TCMDEXEC_flash_reset",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Telecommand: Reset the flash memory module.\n@param args_str\n- Arg 0: Chip Number (CS number) as uint\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Chip Number (CS number) as uint"
+    ]
+  },
+  {
+    "name": "flash_read_status_register",
+    "tcmd_func": "TCMDEXEC_flash_read_status_register",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Read and print Status Register value as hex from the flash memory module.\n@param args_str\n- Arg 0: Chip Number (CS number) as uint\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Chip Number (CS number) as uint"
+    ]
+  },
+  {
+    "name": "flash_force_corrupt_filesystem",
+    "tcmd_func": "TCMDEXEC_flash_force_corrupt_filesystem",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_HIGH_RISK_AND_UNSAFE",
+    "full_docstring": "@brief Force the LittleFS filesystem to be corrupted by modifying the underlying storage on a flash memory module.\n@param args_str\n- Arg 0: Chip Number (CS number) as uint\n@return 0 on success (forced corruption). >0 on error.",
+    "argument_descriptions": [
+      "Chip Number (CS number) as uint"
+    ]
+  },
+  {
+    "name": "fs_format_storage",
+    "tcmd_func": "TCMDEXEC_fs_format_storage",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_RECOVERY_OR_EXPERT",
+    "full_docstring": "@brief Format the LittleFS storage. ERASES ALL FILES. Unmounts the filesystem if necessary.\n@return LFS errror code from LFS_format().",
+    "argument_descriptions": null
+  },
+  {
+    "name": "fs_mount",
+    "tcmd_func": "TCMDEXEC_fs_mount",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": null,
+    "argument_descriptions": null
+  },
+  {
+    "name": "fs_unmount",
+    "tcmd_func": "TCMDEXEC_fs_unmount",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": null,
+    "argument_descriptions": null
+  },
+  {
+    "name": "fs_list_directory",
+    "tcmd_func": "TCMDEXEC_fs_list_directory",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: List all the files and directories within a given directory\n@param args_str\n- Arg 0: Root Directory path as string\n- Arg 1: (Offset) Number of entries to skip at the beginning\n- Arg 2: (Count) Number entries to display",
+    "argument_descriptions": [
+      "Root Directory path as string",
+      "(Offset) Number of entries to skip at the beginning",
+      "(Count) Number entries to display"
+    ]
+  },
+  {
+    "name": "fs_list_directory_json",
+    "tcmd_func": "TCMDEXEC_fs_list_directory_json",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: List all the files and directories within a given directory, as a JSON dict (key are paths, values are sizes)\n@param args_str\n- Arg 0: Root Directory path as string\n- Arg 1: (Offset) Number of entries to skip at the beginning\n- Arg 2: (Count) Number entries to display\n@note In the resulting JSON, the JSON value of directories is \"null\".",
+    "argument_descriptions": [
+      "Root Directory path as string",
+      "(Offset) Number of entries to skip at the beginning",
+      "(Count) Number entries to display"
+    ]
+  },
+  {
+    "name": "fs_make_directory",
+    "tcmd_func": "TCMDEXEC_fs_make_directory",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Create a directory\n@param args_str\n- Arg 0: Directory Name as string (e.g., \"/dir1\", \"/dir1/subdir1\")",
+    "argument_descriptions": [
+      "Directory Name as string (e.g., \"/dir1\", \"/dir1/subdir1\")"
+    ]
+  },
+  {
+    "name": "fs_write_file_str",
+    "tcmd_func": "TCMDEXEC_fs_write_file_str",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Write data to a file in LittleFS\n@param args_str\n- Arg 0: File path as string\n- Arg 1: String to write to file (up to 512 bytes)",
+    "argument_descriptions": [
+      "File path as string",
+      "String to write to file (up to 512 bytes)"
+    ]
+  },
+  {
+    "name": "fs_write_file_hex",
+    "tcmd_func": "TCMDEXEC_fs_write_file_hex",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Write hex data to a file in LittleFS with offset support\n@param args_str\n- Arg 0: File path as string\n- Arg 1: Offset within the file to start writing (uint64)\n- Arg 2: Hex string to write to file (e.g., \"DEADBEEF\" or \"DE AD BE EF\")\n@note The maximum number of bytes that can be written is 105 bytes",
+    "argument_descriptions": [
+      "File path as string",
+      "Offset within the file to start writing (uint64)",
+      "Hex string to write to file (e.g., \"DEADBEEF\" or \"DE AD BE EF\")"
+    ]
+  },
+  {
+    "name": "fs_delete_file",
+    "tcmd_func": "TCMDEXEC_fs_delete_file",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Deletes a specified file in LittleFS\n@param args_str\n- Arg 0: File name to be deleted\n@note Do not add quotations around the argument, write as is.",
+    "argument_descriptions": [
+      "File name to be deleted"
+    ]
+  },
+  {
+    "name": "fs_delete_dir",
+    "tcmd_func": "TCMDEXEC_fs_delete_dir",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Deletes a specified directory, including all subfolders/subfiles.\n@param args_str\n- Arg 0: Directory name to be deleted\n@note Do not add quotations around the argument, write as is.",
+    "argument_descriptions": [
+      "Directory name to be deleted"
+    ]
+  },
+  {
+    "name": "fs_read_file_hex",
+    "tcmd_func": "TCMDEXEC_fs_read_file_hex",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Reads a file from LittleFS, and responds with its contents as 2-digit hex bytes (no spaces).\n@param args_str\n- Arg 0: File path as string\n- Arg 1: Start offset (bytes). Nominally, pick 0.\n- Arg 2: Length to read (bytes). 0 to read max.\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "File path as string",
+      "Start offset (bytes). Nominally, pick 0.",
+      "Length to read (bytes). 0 to read max."
+    ]
+  },
+  {
+    "name": "fs_read_text_file",
+    "tcmd_func": "TCMDEXEC_fs_read_text_file",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Reads a file from LittleFS, and responds with its contents as a string.\n@param args_str\n- Arg 0: File path as string\n- Arg 1: Start offset (bytes). Nominally, pick 0.\n- Arg 2: Length to read (bytes). 0 to read max.\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "File path as string",
+      "Start offset (bytes). Nominally, pick 0.",
+      "Length to read (bytes). 0 to read max."
+    ]
+  },
+  {
+    "name": "fs_read_file_sha256_hash_json",
+    "tcmd_func": "TCMDEXEC_fs_read_file_sha256_hash_json",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Calculates the SHA256 hash of a file in LittleFS and returns it as a little-endian hex string.\n@param args_str\n- Arg 0: File path as string\n- Arg 1: Start offset (bytes). Nominally, pick 0.\n- Arg 2: Length to read (bytes). 0 to read max.\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "File path as string",
+      "Start offset (bytes). Nominally, pick 0.",
+      "Length to read (bytes). 0 to read max."
+    ]
+  },
+  {
+    "name": "fs_demo_write_then_read",
+    "tcmd_func": "TCMDEXEC_fs_demo_write_then_read",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Writes a file to LittleFS, then reads it back.\n@param args_str\n- Arg 0: File path as string\n@param response_output_buf\n@param response_output_buf_len\n@return",
+    "argument_descriptions": [
+      "File path as string"
+    ]
+  },
+  {
+    "name": "fs_demo_write_random_data",
+    "tcmd_func": "TCMDEXEC_fs_demo_write_random_data",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Write a file with pseudorandom data to LittleFS.\n@param args_str\n- Arg 0: File path as string\n- Arg 1: File size in bytes (approx., best-effort)\n- Arg 2: Amount of randomness - 0 = no randomness, 1 = highly predictable, 255 = very random\n@param response_output_buf\n@param response_output_buf_len\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "File path as string",
+      "File size in bytes (approx., best-effort)",
+      "Amount of randomness - 0 = no randomness, 1 = highly predictable, 255 = very random"
+    ]
+  },
+  {
+    "name": "fs_benchmark_write_read",
+    "tcmd_func": "TCMDEXEC_fs_benchmark_write_read",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Telecommand: Benchmark LittleFS write and read operations\n@param args_str\n- Arg 0: Write chunk size (bytes)\n- Arg 1: Write chunk count\n@return 0 on success, 1 if error parsing args, 2 if benchmark failed\n@note The maximum write chunk size is 127 bytes, apparently; need to investigate why so small.",
+    "argument_descriptions": [
+      "Write chunk size (bytes)",
+      "Write chunk count"
+    ]
+  },
+  {
+    "name": "fs_get_filesystem_stats_json",
+    "tcmd_func": "TCMDEXEC_fs_get_filesystem_stats_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Generate a JSON string containing filesystem stats and debugging info.\n@param args_str No arguments.\n@return 0 on success, 1 on error.\n@note Used space may be approximate, due to the nature of LittleFS Copy-on-Write (COW).",
+    "argument_descriptions": []
+  },
+  {
+    "name": "fs_compress_file_with_heatshrink",
+    "tcmd_func": "TCMDEXEC_fs_compress_file_with_heatshrink",
+    "description": null,
+    "number_of_args": 4,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Compress a file using heatshrink.\n@param args_str\n- Arg 0: Input file path\n- Arg 1: Output file path (e.g., suffix with \".hs\")\n- Arg 2: window_sz2 (min 4, recommended 8, max 15, like CLI -w arg)\n- Arg 3: lookahead_sz2 (min 3, recommended 4, less than window_sz2, like CLI -l arg)\n@param response_output_buf Outputs the compression ratio as a message.\n@return 0 on success. 1 on arg parsing errors.\n@note Can cause system to crash and reboot. Safe to use, but just be aware.\n@note Requires that `window_sz2 > lookahead_sz2`.\n@note Heatshrink does NOT embed the window sizes in the data.\nYou must remember them, and use them when decompressing.",
+    "argument_descriptions": [
+      "Input file path",
+      "Output file path (e.g., suffix with \".hs\")",
+      "window_sz2 (min 4, recommended 8, max 15, like CLI -w arg)",
+      "lookahead_sz2 (min 3, recommended 4, less than window_sz2, like CLI -l arg)"
+    ]
+  },
+  {
+    "name": "fs_count_str_occurrences",
+    "tcmd_func": "TCMDEXEC_fs_count_str_occurrences",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Count string occurrences in a file\n@param args_str\n- Arg 0: File path as string (haystack)\n- Arg 1: Needle string to search for",
+    "argument_descriptions": [
+      "File path as string (haystack)",
+      "Needle string to search for"
+    ]
+  },
+  {
+    "name": "fs_find_nth_str_occurrence",
+    "tcmd_func": "TCMDEXEC_fs_find_nth_str_occurrence",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Find Nth string occurrence in a file\n@param args_str\n- Arg 0: File path as string (haystack)\n- Arg 1: Needle string to search for\n- Arg 2: N (1-based)",
+    "argument_descriptions": [
+      "File path as string (haystack)",
+      "Needle string to search for",
+      "N (1-based)"
+    ]
+  },
+  {
+    "name": "fs_count_hex_occurrences",
+    "tcmd_func": "TCMDEXEC_fs_count_hex_occurrences",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Count hex byte sequence occurrences in a file\n@param args_str\n- Arg 0: File path as string (haystack)\n- Arg 1: Hex string to search for (e.g. \"DEADBEEF\")",
+    "argument_descriptions": [
+      "File path as string (haystack)",
+      "Hex string to search for (e.g. \"DEADBEEF\")"
+    ]
+  },
+  {
+    "name": "fs_find_nth_hex_occurrence",
+    "tcmd_func": "TCMDEXEC_fs_find_nth_hex_occurrence",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Find Nth hex byte sequence occurrence in a file\n@param args_str\n- Arg 0: File path as string (haystack)\n- Arg 1: Hex string to search for\n- Arg 2: N (1-based)",
+    "argument_descriptions": [
+      "File path as string (haystack)",
+      "Hex string to search for",
+      "N (1-based)"
+    ]
+  },
+  {
+    "name": "adcs_ack",
+    "tcmd_func": "TCMDEXEC_adcs_ack",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_set_wheel_speed",
+    "tcmd_func": "TCMDEXEC_adcs_set_wheel_speed",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Set the wheel speed of the ADCS\n@param args_str\n- Arg 0: wheel speed x value\n- Arg 1: wheel speed y value\n- Arg 2: wheel speed z value\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "wheel speed x value",
+      "wheel speed y value",
+      "wheel speed z value"
+    ]
+  },
+  {
+    "name": "adcs_reset",
+    "tcmd_func": "TCMDEXEC_adcs_reset",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@note The ADCS will become unresponsive after sending this command for at least 15 seconds.\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_identification",
+    "tcmd_func": "TCMDEXEC_adcs_identification",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_program_status",
+    "tcmd_func": "TCMDEXEC_adcs_program_status",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_communication_status",
+    "tcmd_func": "TCMDEXEC_adcs_communication_status",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_deploy_magnetometer",
+    "tcmd_func": "TCMDEXEC_adcs_deploy_magnetometer",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- Arg 0: timeout for deployment [seconds]\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "timeout for deployment [seconds]"
+    ]
+  },
+  {
+    "name": "adcs_set_run_mode",
+    "tcmd_func": "TCMDEXEC_adcs_set_run_mode",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- Arg 0: run mode to set; can be can be off (0), enabled (1), triggered (2), or simulation (3)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "run mode to set; can be can be off (0), enabled (1), triggered (2), or simulation (3)"
+    ]
+  },
+  {
+    "name": "adcs_clear_errors",
+    "tcmd_func": "TCMDEXEC_adcs_clear_errors",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_attitude_control_mode",
+    "tcmd_func": "TCMDEXEC_adcs_attitude_control_mode",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Set the attitude control mode of the ADCS; needs Power Control to be set before working\n@param args_str\n- Arg 0: Control mode to set (Table 77 in Firmware Manual)\n- Arg 1: Timeout to set control mode\n@return 0 on success, >0 on error\n@details ADCS_control_mode_enum_t\nADCS_CONTROL_MODE_NONE = 0,\nADCS_CONTROL_MODE_DETUMBLING = 1,\nADCS_CONTROL_MODE_Y_THOMSON_SPIN = 2,\nADCS_CONTROL_MODE_Y_WHEEL_MOMENTUM_STABILIZED_INITIAL_PITCH_ACQUISITION = 3,\nADCS_CONTROL_MODE_Y_WHEEL_MOMENTUM_STABILIZED_STEADY_STATE = 4,\nADCS_CONTROL_MODE_XYZ_WHEEL = 5,\nADCS_CONTROL_MODE_RWHEEL_SUN_TRACKING = 6,\nADCS_CONTROL_MODE_RWHEEL_TARGET_TRACKING = 7,\nADCS_CONTROL_MODE_VERY_FAST_SPIN_DETUMBLING = 8,\nADCS_CONTROL_MODE_FAST_SPIN_DETUMBLING = 9,\nADCS_CONTROL_MODE_USER_SPECIFIC_1 = 10,\nADCS_CONTROL_MODE_USER_SPECIFIC_2 = 11,\nADCS_CONTROL_MODE_STOP_R_WHEELS = 12,\nADCS_CONTROL_MODE_USER_CODED = 13,\nADCS_CONTROL_MODE_SUN_TRACKING_YAW_OR_ROLL_ONLY_WHEEL = 14,\nADCS_CONTROL_MODE_TARGET_TRACKING_YAW_ONLY_WHEEL = 15",
+    "argument_descriptions": [
+      "Control mode to set (Table 77 in Firmware Manual)",
+      "Timeout to set control mode"
+    ]
+  },
+  {
+    "name": "adcs_attitude_estimation_mode",
+    "tcmd_func": "TCMDEXEC_adcs_attitude_estimation_mode",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- Arg 0: Attitude estimation mode to set (Table 79 in Firmware Manual)\n@return 0 on success, >0 on error\n@details ADCS_estimation_mode_enum_t\nADCS_ESTIMATION_MODE_NONE = 0,\nADCS_ESTIMATION_MODE_MEMS_RATE_SENSING = 1,\nADCS_ESTIMATION_MODE_MAGNETOMETER_RATE_FILTER = 2,\nADCS_ESTIMATION_MODE_MAGNETOMETER_RATE_FILTER_WITH_PITCH_ESTIMATION = 3,\nADCS_ESTIMATION_MODE_MAGNETOMETER_AND_FINE_SUN_TRIAD_ALGORITHM = 4,\nADCS_ESTIMATION_MODE_FULL_STATE_EXTENDED_KALMAN_FILTER = 5,\nADCS_ESTIMATION_MODE_MEMS_GYRO_EXTENDED_KALMAN_FILTER = 6,\nADCS_ESTIMATION_MODE_USER_CODED_ESTIMATION_MODE = 7",
+    "argument_descriptions": [
+      "Attitude estimation mode to set (Table 79 in Firmware Manual)"
+    ]
+  },
+  {
+    "name": "adcs_run_once",
+    "tcmd_func": "TCMDEXEC_adcs_run_once",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: If ADCS run mode is Triggered, run the ADCS sensor loop\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_set_magnetometer_mode",
+    "tcmd_func": "TCMDEXEC_adcs_set_magnetometer_mode",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Set the magnetometer mode of the ADCS\n@param args_str\n- Arg 0: magnetometer mode to set (0 = main sampled by Signal MCU, 1 = redundant sampled by Signal MCU, 2 = main sampled by Motor MCU, 3 = none)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "magnetometer mode to set (0 = main sampled by Signal MCU, 1 = redundant sampled by Signal MCU, 2 = main sampled by Motor MCU, 3 = none)"
+    ]
+  },
+  {
+    "name": "adcs_set_magnetorquer_output",
+    "tcmd_func": "TCMDEXEC_adcs_set_magnetorquer_output",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Set the magnetorquer output values\n@param args_str\n- Arg 0: magnetorquer x duty cycle (double)\n- Arg 1: magnetorquer y duty cycle (double)\n- Arg 2: magnetorquer z duty cycle (double)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "magnetorquer x duty cycle (double)",
+      "magnetorquer y duty cycle (double)",
+      "magnetorquer z duty cycle (double)"
+    ]
+  },
+  {
+    "name": "adcs_save_config",
+    "tcmd_func": "TCMDEXEC_adcs_save_config",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_estimate_angular_rates",
+    "tcmd_func": "TCMDEXEC_adcs_estimate_angular_rates",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_get_llh_position",
+    "tcmd_func": "TCMDEXEC_adcs_get_llh_position",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_get_power_control",
+    "tcmd_func": "TCMDEXEC_adcs_get_power_control",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_set_power_control",
+    "tcmd_func": "TCMDEXEC_adcs_set_power_control",
+    "description": null,
+    "number_of_args": 10,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Set the power control mode of each component of the ADCS; for each, 0 turns the component off, 1 turns it on, and 2 keeps it the same as previously.\n@param args_str\n- Arg 0: CubeControl signal power control mode\n- Arg 1: CubeControl motor power control mode\n- Arg 2: CubeSense 1 power control mode\n- Arg 3: CubeSense 2 power control mode\n- Arg 4: CubeStar power control mode\n- Arg 5: CubeWheel 1 power control mode\n- Arg 6: CubeWheel 2 power control mode\n- Arg 7: CubeWheel 3 power control mode\n- Arg 8: Motor power control mode\n- Arg 9: GPS power control mode\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "CubeControl signal power control mode",
+      "CubeControl motor power control mode",
+      "CubeSense 1 power control mode",
+      "CubeSense 2 power control mode",
+      "CubeStar power control mode",
+      "CubeWheel 1 power control mode",
+      "CubeWheel 2 power control mode",
+      "CubeWheel 3 power control mode",
+      "Motor power control mode",
+      "GPS power control mode"
+    ]
+  },
+  {
+    "name": "adcs_enter_low_power_mode",
+    "tcmd_func": "TCMDEXEC_adcs_enter_low_power_mode",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Put the ADCS in low-power mode, with only essential component power.\n@param args_str\n- Arg 0: Enable stable attitude mode. 1 to keep the attitude of the satellite stable (costs average 250 mW, maximum 1 W extra), 0 to disable control entirely (satellite will slowly start to tumble).\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Enable stable attitude mode. 1 to keep the attitude of the satellite stable (costs average 250 mW, maximum 1 W extra), 0 to disable control entirely (satellite will slowly start to tumble)."
+    ]
+  },
+  {
+    "name": "adcs_track_sun",
+    "tcmd_func": "TCMDEXEC_adcs_track_sun",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Automatically track the sun with the ADCS.\n@note The satellite must be already in Y-Momentum mode (i.e. stable attitude) to do this successfully. Rate Gyro Offsets must be set.\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_set_magnetometer_config",
+    "tcmd_func": "TCMDEXEC_adcs_set_magnetometer_config",
+    "description": null,
+    "number_of_args": 15,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- Arg 0: Mounting transform alpha angle [deg] (double)\n- Arg 1: Mounting transform beta angle [deg] (double)\n- Arg 2: Mounting transform gamma angle [deg] (double)\n- Arg 3: Channel 1 offset value (double)\n- Arg 4: Channel 2 offset value (double)\n- Arg 5: Channel 3 offset value (double)\n- Arg 6: Value (1, 1) of the magnetometer sensitivity matrix (double)\n- Arg 7: Value (2, 2) of the magnetometer sensitivity matrix (double)\n- Arg 8: Value (3, 3) of the magnetometer sensitivity matrix (double)\n- Arg 9: Value (1, 2) of the magnetometer sensitivity matrix (double)\n- Arg 10: Value (1, 3) of the magnetometer sensitivity matrix (double)\n- Arg 11: Value (2, 1) of the magnetometer sensitivity matrix (double)\n- Arg 12: Value (2, 3) of the magnetometer sensitivity matrix (double)\n- Arg 13: Value (3, 1) of the magnetometer sensitivity matrix (double)\n- Arg 14: Value (3, 2) of the magnetometer sensitivity matrix (double)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Mounting transform alpha angle [deg] (double)",
+      "Mounting transform beta angle [deg] (double)",
+      "Mounting transform gamma angle [deg] (double)",
+      "Channel 1 offset value (double)",
+      "Channel 2 offset value (double)",
+      "Channel 3 offset value (double)",
+      "Value (1, 1) of the magnetometer sensitivity matrix (double)",
+      "Value (2, 2) of the magnetometer sensitivity matrix (double)",
+      "Value (3, 3) of the magnetometer sensitivity matrix (double)",
+      "Value (1, 2) of the magnetometer sensitivity matrix (double)",
+      "Value (1, 3) of the magnetometer sensitivity matrix (double)",
+      "Value (2, 1) of the magnetometer sensitivity matrix (double)",
+      "Value (2, 3) of the magnetometer sensitivity matrix (double)",
+      "Value (3, 1) of the magnetometer sensitivity matrix (double)",
+      "Value (3, 2) of the magnetometer sensitivity matrix (double)"
+    ]
+  },
+  {
+    "name": "adcs_bootloader_clear_errors",
+    "tcmd_func": "TCMDEXEC_adcs_bootloader_clear_errors",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_set_unix_time_save_mode",
+    "tcmd_func": "TCMDEXEC_adcs_set_unix_time_save_mode",
+    "description": null,
+    "number_of_args": 4,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Choose the circumstances to save the current Unix time\n@param args_str\n- Arg 0: whether to save the current Unix time immediately (bool passed as int; 1 = save immediately, 0 = don't save immediately)\n- Arg 1: whether to save the current Unix time whenever a command is used to update it (bool passed as int; 1 = save on command, 0 = don't)\n- Arg 2: whether to save the current Unix time periodically (bool passed as int; 1 = save periodically, 0 = don't)\n- Arg 3: the period of saving the current Unix time (in seconds)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "whether to save the current Unix time immediately (bool passed as int; 1 = save immediately, 0 = don't save immediately)",
+      "whether to save the current Unix time whenever a command is used to update it (bool passed as int; 1 = save on command, 0 = don't)",
+      "whether to save the current Unix time periodically (bool passed as int; 1 = save periodically, 0 = don't)",
+      "the period of saving the current Unix time (in seconds)"
+    ]
+  },
+  {
+    "name": "adcs_get_unix_time_save_mode",
+    "tcmd_func": "TCMDEXEC_adcs_get_unix_time_save_mode",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_set_sgp4_orbit_params",
+    "tcmd_func": "TCMDEXEC_adcs_set_sgp4_orbit_params",
+    "description": null,
+    "number_of_args": 8,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Set the ADCS Simplified General Perturbations (SGP4) orbit parameters\n@param args_str\n- Arg 0: inclination (degrees) (double)\n- Arg 1: eccentricity (dimensionless) (double)\n- Arg 2: right ascension of the ascending node (degrees) (double)\n- Arg 3: argument of perigee (degrees) (double)\n- Arg 4: b-star drag term (dimensionless) (double)\n- Arg 5: mean motion (orbits per day) (double)\n- Arg 6: mean anomaly (degrees) (double)\n- Arg 7: epoch (integer component is year, decimal component is day) (double)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "inclination (degrees) (double)",
+      "eccentricity (dimensionless) (double)",
+      "right ascension of the ascending node (degrees) (double)",
+      "argument of perigee (degrees) (double)",
+      "b-star drag term (dimensionless) (double)",
+      "mean motion (orbits per day) (double)",
+      "mean anomaly (degrees) (double)",
+      "epoch (integer component is year, decimal component is day) (double)"
+    ]
+  },
+  {
+    "name": "adcs_get_sgp4_orbit_params",
+    "tcmd_func": "TCMDEXEC_adcs_get_sgp4_orbit_params",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_save_orbit_params",
+    "tcmd_func": "TCMDEXEC_adcs_save_orbit_params",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_rate_sensor_rates",
+    "tcmd_func": "TCMDEXEC_adcs_rate_sensor_rates",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_get_wheel_speed",
+    "tcmd_func": "TCMDEXEC_adcs_get_wheel_speed",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_get_magnetorquer_command",
+    "tcmd_func": "TCMDEXEC_adcs_get_magnetorquer_command",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_get_raw_magnetometer_values",
+    "tcmd_func": "TCMDEXEC_adcs_get_raw_magnetometer_values",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the raw magnetometer values from the ADCS.\n@note Values are given as raw ADC values; use adcs_get_magnetic_field_vector for calibrated values\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_estimate_fine_angular_rates",
+    "tcmd_func": "TCMDEXEC_adcs_estimate_fine_angular_rates",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_get_magnetometer_config",
+    "tcmd_func": "TCMDEXEC_adcs_get_magnetometer_config",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_get_commanded_attitude_angles",
+    "tcmd_func": "TCMDEXEC_adcs_get_commanded_attitude_angles",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_set_commanded_attitude_angles",
+    "tcmd_func": "TCMDEXEC_adcs_set_commanded_attitude_angles",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- Arg 0: x attitude angle (double)\n- Arg 1: y attitude angle (double)\n- Arg 2: z attitude angle (double)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "x attitude angle (double)",
+      "y attitude angle (double)",
+      "z attitude angle (double)"
+    ]
+  },
+  {
+    "name": "adcs_set_estimation_params",
+    "tcmd_func": "TCMDEXEC_adcs_set_estimation_params",
+    "description": null,
+    "number_of_args": 17,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- Arg 0: magnetometer_rate_filter_system_noise (float; magnetometer rate filter system noise covariance parameter)\n- Arg 1: extended_kalman_filter_system_noise (float; extended kalman filter system noise covariance parameter)\n- Arg 2: coarse_sun_sensor_measurement_noise (float; CSS measurement noise covariance parameter)\n- Arg 3: sun_sensor_measurement_noise (float; sun sensor measurement noise covariance parameter)\n- Arg 4: nadir_sensor_measurement_noise (float; nadir sensor measurement noise covariance parameter)\n- Arg 5: magnetometer_measurement_noise (float; magnetometer measurement noise covariance parameter)\n- Arg 6: star_tracker_measurement_noise (float; star tracker measurement noise covariance parameter)\n- Arg 7: use_sun_sensor (bool; whether or not to use the sun sensor measurement in extended_kalman_filter)\n- Arg 8: use_nadir_sensor (bool; whether or not to use the nadir sensor measurement in extended_kalman_filter)\n- Arg 9: use_css (bool; whether or not to use the CSS measurement in extended_kalman_filter)\n- Arg 10: use_star_tracker (bool; whether or not to use the star tracker measurement in extended_kalman_filter)\n- Arg 11: nadir_sensor_terminator_test (bool; select to ignore nadir sensor measurements when terminator is in FOV)\n- Arg 12: automatic_magnetometer_recovery (bool; select whether automatic switch to redundant magnetometer should occur in case of failure)\n- Arg 13: magnetometer_mode (enum; select magnetometer mode for estimation and control)\n- Arg 14: magnetometer_selection_for_raw_magnetometer_telemetry (enum; select magnetometer mode for the second raw telemetry frame)\n- Arg 15: automatic_estimation_transition_due_to_rate_sensor_errors (bool; enable/disable automatic transition from MEMS rate estimation mode to RKF in case of rate sensor error)\n- Arg 16: error_counter_reset_period_min (uint8; period after which a node's power cycle reset counter is cleared if no errors occurred)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "magnetometer_rate_filter_system_noise (float; magnetometer rate filter system noise covariance parameter)",
+      "extended_kalman_filter_system_noise (float; extended kalman filter system noise covariance parameter)",
+      "coarse_sun_sensor_measurement_noise (float; CSS measurement noise covariance parameter)",
+      "sun_sensor_measurement_noise (float; sun sensor measurement noise covariance parameter)",
+      "nadir_sensor_measurement_noise (float; nadir sensor measurement noise covariance parameter)",
+      "magnetometer_measurement_noise (float; magnetometer measurement noise covariance parameter)",
+      "star_tracker_measurement_noise (float; star tracker measurement noise covariance parameter)",
+      "use_sun_sensor (bool; whether or not to use the sun sensor measurement in extended_kalman_filter)",
+      "use_nadir_sensor (bool; whether or not to use the nadir sensor measurement in extended_kalman_filter)",
+      "use_css (bool; whether or not to use the CSS measurement in extended_kalman_filter)",
+      "use_star_tracker (bool; whether or not to use the star tracker measurement in extended_kalman_filter)",
+      "nadir_sensor_terminator_test (bool; select to ignore nadir sensor measurements when terminator is in FOV)",
+      "automatic_magnetometer_recovery (bool; select whether automatic switch to redundant magnetometer should occur in case of failure)",
+      "magnetometer_mode (enum; select magnetometer mode for estimation and control)",
+      "magnetometer_selection_for_raw_magnetometer_telemetry (enum; select magnetometer mode for the second raw telemetry frame)",
+      "automatic_estimation_transition_due_to_rate_sensor_errors (bool; enable/disable automatic transition from MEMS rate estimation mode to RKF in case of rate sensor error)",
+      "error_counter_reset_period_min (uint8; period after which a node's power cycle reset counter is cleared if no errors occurred)"
+    ]
+  },
+  {
+    "name": "adcs_get_estimation_params",
+    "tcmd_func": "TCMDEXEC_adcs_get_estimation_params",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_set_augmented_sgp4_params",
+    "tcmd_func": "TCMDEXEC_adcs_set_augmented_sgp4_params",
+    "description": null,
+    "number_of_args": 17,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- Arg 0: incl_coefficient (set inclination filter coefficient) (double)\n- Arg 1: raan_coefficient (set RAAN filter coefficient) (double)\n- Arg 2: ecc_coefficient (set eccentricity filter coefficient) (double)\n- Arg 3: aop_coefficient (set argument of perigee filter coefficient) (double)\n- Arg 4: time_coefficient (set time filter coefficient) (double)\n- Arg 5: pos_coefficient (set position filter coefficient) (double)\n- Arg 6: maximum_position_error (maximum position error for Augmented_SGP4 to continue working) (double)\n- Arg 7: augmented_sgp4_filter (The type of filter being used (enum))\n- Arg 8: xp_coefficient (polar coefficient xdouble; p) (double)\n- Arg 9: yp_coefficient (polar coefficient ydouble; p) (double)\n- Arg 10: gps_roll_over (GPS roll over number)\n- Arg 11: position_sd (maximum position standard deviation for Augmented_SGP4 to continue working) (double)\n- Arg 12: velocity_sd (maximum velocity standard deviation for Augmented_SGP4 to continue working) (double)\n- Arg 13: min_satellites (Minimum satellites required for Augmented_SGP4 to continue working)\n- Arg 14: time_gain (time offset compensation gain) (double)\n- Arg 15: max_lag (maximum lagged timestamp measurements to incorporate) (double)\n- Arg 16: min_samples (Minimum samples to use to get Augmented_SGP4)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "incl_coefficient (set inclination filter coefficient) (double)",
+      "raan_coefficient (set RAAN filter coefficient) (double)",
+      "ecc_coefficient (set eccentricity filter coefficient) (double)",
+      "aop_coefficient (set argument of perigee filter coefficient) (double)",
+      "time_coefficient (set time filter coefficient) (double)",
+      "pos_coefficient (set position filter coefficient) (double)",
+      "maximum_position_error (maximum position error for Augmented_SGP4 to continue working) (double)",
+      "augmented_sgp4_filter (The type of filter being used (enum))",
+      "xp_coefficient (polar coefficient xdouble; p) (double)",
+      "yp_coefficient (polar coefficient ydouble; p) (double)",
+      "gps_roll_over (GPS roll over number)",
+      "position_sd (maximum position standard deviation for Augmented_SGP4 to continue working) (double)",
+      "velocity_sd (maximum velocity standard deviation for Augmented_SGP4 to continue working) (double)",
+      "min_satellites (Minimum satellites required for Augmented_SGP4 to continue working)",
+      "time_gain (time offset compensation gain) (double)",
+      "max_lag (maximum lagged timestamp measurements to incorporate) (double)",
+      "min_samples (Minimum samples to use to get Augmented_SGP4)"
+    ]
+  },
+  {
+    "name": "adcs_get_augmented_sgp4_params",
+    "tcmd_func": "TCMDEXEC_adcs_get_augmented_sgp4_params",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_set_tracking_controller_target_reference",
+    "tcmd_func": "TCMDEXEC_adcs_set_tracking_controller_target_reference",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Set the ADCS tracking controller target reference (location on Earth to point towards)\n@param args_str\n- Arg 0: longitude (double)\n- Arg 1: latitude (double)\n- Arg 2: altitude (double)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "longitude (double)",
+      "latitude (double)",
+      "altitude (double)"
+    ]
+  },
+  {
+    "name": "adcs_get_tracking_controller_target_reference",
+    "tcmd_func": "TCMDEXEC_adcs_get_tracking_controller_target_reference",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_set_rate_gyro_config",
+    "tcmd_func": "TCMDEXEC_adcs_set_rate_gyro_config",
+    "description": null,
+    "number_of_args": 7,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- Arg 0: gyro1 (Axis for Gyro #1; enum, options are pos/neg x, pos/neg y, pos/neg z)\n- Arg 1: gyro2 (Axis for Gyro #2; enum, options are pos/neg x, pos/neg y, pos/neg z)\n- Arg 2: gyro3 (Axis for Gyro #3; enum, options are pos/neg x, pos/neg y, pos/neg z)\n- Arg 3: x_rate_offset (x-rate sensor offset) (double)\n- Arg 4: y_rate_offset (y-rate sensor offset) (double)\n- Arg 5: z_rate_offset (z-rate sensor offset) (double)\n- Arg 6: rate_sensor_mult (multiplier of rate sensor measurement)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "gyro1 (Axis for Gyro #1; enum, options are pos/neg x, pos/neg y, pos/neg z)",
+      "gyro2 (Axis for Gyro #2; enum, options are pos/neg x, pos/neg y, pos/neg z)",
+      "gyro3 (Axis for Gyro #3; enum, options are pos/neg x, pos/neg y, pos/neg z)",
+      "x_rate_offset (x-rate sensor offset) (double)",
+      "y_rate_offset (y-rate sensor offset) (double)",
+      "z_rate_offset (z-rate sensor offset) (double)",
+      "rate_sensor_mult (multiplier of rate sensor measurement)"
+    ]
+  },
+  {
+    "name": "adcs_get_rate_gyro_config",
+    "tcmd_func": "TCMDEXEC_adcs_get_rate_gyro_config",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_estimated_attitude_angles",
+    "tcmd_func": "TCMDEXEC_adcs_estimated_attitude_angles",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_magnetic_field_vector",
+    "tcmd_func": "TCMDEXEC_adcs_magnetic_field_vector",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_fine_sun_vector",
+    "tcmd_func": "TCMDEXEC_adcs_fine_sun_vector",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_nadir_vector",
+    "tcmd_func": "TCMDEXEC_adcs_nadir_vector",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_commanded_wheel_speed",
+    "tcmd_func": "TCMDEXEC_adcs_commanded_wheel_speed",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_igrf_magnetic_field_vector",
+    "tcmd_func": "TCMDEXEC_adcs_igrf_magnetic_field_vector",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_quaternion_error_vector",
+    "tcmd_func": "TCMDEXEC_adcs_quaternion_error_vector",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_estimated_gyro_bias",
+    "tcmd_func": "TCMDEXEC_adcs_estimated_gyro_bias",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_estimation_innovation_vector",
+    "tcmd_func": "TCMDEXEC_adcs_estimation_innovation_vector",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_raw_cam1_sensor",
+    "tcmd_func": "TCMDEXEC_adcs_raw_cam1_sensor",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_raw_cam2_sensor",
+    "tcmd_func": "TCMDEXEC_adcs_raw_cam2_sensor",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_raw_coarse_sun_sensor_1_to_6",
+    "tcmd_func": "TCMDEXEC_adcs_raw_coarse_sun_sensor_1_to_6",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_raw_coarse_sun_sensor_7_to_10",
+    "tcmd_func": "TCMDEXEC_adcs_raw_coarse_sun_sensor_7_to_10",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_cubecontrol_current",
+    "tcmd_func": "TCMDEXEC_adcs_cubecontrol_current",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_measurements",
+    "tcmd_func": "TCMDEXEC_adcs_measurements",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_download_sd_file_by_index",
+    "tcmd_func": "TCMDEXEC_adcs_download_sd_file_by_index",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Download a specific file from the ADCS SD card by its index\n@param args_str\n- Arg 0: The index of the file to download\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "The index of the file to download"
+    ]
+  },
+  {
+    "name": "adcs_download_sd_file_by_checksum",
+    "tcmd_func": "TCMDEXEC_adcs_download_sd_file_by_checksum",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Download a specific file from the ADCS SD card by its checksum.\n@param args_str\n- Arg 0: The CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "The CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)"
+    ]
+  },
+  {
+    "name": "adcs_generic_command",
+    "tcmd_func": "TCMDEXEC_adcs_generic_command",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: execute a generic command on the ADCS\n@param args_str\n- Arg 0: ID of the telecommand to send (see Firmware Reference Manual)\n- Arg 1: hex array of data bytes of length up to 504 (longest command is almost ADCS Configuration (ID 26/204) at 504 bytes)\n@note All hex bytes must be two-digit (e.g. 00 instead of 0); for zero-parameter commands, use 00\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "ID of the telecommand to send (see Firmware Reference Manual)",
+      "hex array of data bytes of length up to 504 (longest command is almost ADCS Configuration (ID 26/204) at 504 bytes)"
+    ]
+  },
+  {
+    "name": "adcs_generic_bootloader_command",
+    "tcmd_func": "TCMDEXEC_adcs_generic_bootloader_command",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: execute a generic command on the ADCS bootloader\n@param args_str\n- Arg 0: ID of the telecommand to send (see Firmware Reference Manual)\n- Arg 1: hex array of data bytes of length up to 504 (longest command is almost ADCS Configuration (ID 26/204) at 504 bytes)\n@note All hex bytes must be two-digit (e.g. 00 instead of 0); for zero-parameter commands, use 00\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "ID of the telecommand to send (see Firmware Reference Manual)",
+      "hex array of data bytes of length up to 504 (longest command is almost ADCS Configuration (ID 26/204) at 504 bytes)"
+    ]
+  },
+  {
+    "name": "adcs_generic_telemetry_request",
+    "tcmd_func": "TCMDEXEC_adcs_generic_telemetry_request",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: obtain generic telemetry from the ADCS\n@param args_str\n- Arg 0: ID of the telemetry request to send (see Firmware Reference Manual)\n- Arg 1: number of data bytes expected to receive from the ADCS (also see Firmware Reference Manual, up to 504)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "ID of the telemetry request to send (see Firmware Reference Manual)",
+      "number of data bytes expected to receive from the ADCS (also see Firmware Reference Manual, up to 504)"
+    ]
+  },
+  {
+    "name": "adcs_acp_execution_state",
+    "tcmd_func": "TCMDEXEC_adcs_acp_execution_state",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_get_current_state_1",
+    "tcmd_func": "TCMDEXEC_adcs_get_current_state_1",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the given telemetry data from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_save_image_to_sd",
+    "tcmd_func": "TCMDEXEC_adcs_save_image_to_sd",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Save an image to the ADCS onboard SD card\n@param args_str\n- Arg 0: (int) Which camera to save the image from; can be Camera 1 (0), Camera 2 (1), or Star (2)\n- Arg 1: (int) Resolution of the image to save; can be 1024x1024 (0), 512x512 (1), 256x256 (2), 128x128 (3), or 64x64 (4)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "(int) Which camera to save the image from; can be Camera 1 (0), Camera 2 (1), or Star (2)",
+      "(int) Resolution of the image to save; can be 1024x1024 (0), 512x512 (1), 256x256 (2), 128x128 (3), or 64x64 (4)"
+    ]
+  },
+  {
+    "name": "adcs_request_commissioning_telemetry",
+    "tcmd_func": "TCMDEXEC_adcs_request_commissioning_telemetry",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request commissioning telemetry from the ADCS and save it to the onboard SD card\n@param args_str\n- Arg 0: Which commissioning step to request telemetry for (1-18)\n- Arg 1: Log number (1 or 2)\n- Arg 2: Destination SD card (0 = primary, 1 = secondary)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Which commissioning step to request telemetry for (1-18)",
+      "Log number (1 or 2)",
+      "Destination SD card (0 = primary, 1 = secondary)"
+    ]
+  },
+  {
+    "name": "adcs_synchronize_unix_time",
+    "tcmd_func": "TCMDEXEC_adcs_synchronize_unix_time",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Synchronize the current ADCS Unix epoch time\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_get_current_unix_time",
+    "tcmd_func": "TCMDEXEC_adcs_get_current_unix_time",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Retrieve the current ADCS Unix epoch time\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_set_sd_log_config",
+    "tcmd_func": "TCMDEXEC_adcs_set_sd_log_config",
+    "description": null,
+    "number_of_args": 4,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Repeatedly log given data from an SD card\n@param args_str\n- Arg 0: which_log; 1 or 2; which specific log number to log to the SD card\n- Arg 1: log_array; Hex array of bitmasks for log config (10 hex bytes)\n- Arg 2: log_period; Period to log data to the SD card; if zero, then disable logging\n- Arg 3: which_sd; Which SD card to log to, 0 for primary, 1 for secondary\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "which_log; 1 or 2; which specific log number to log to the SD card",
+      "log_array; Hex array of bitmasks for log config (10 hex bytes)",
+      "log_period; Period to log data to the SD card; if zero, then disable logging",
+      "which_sd; Which SD card to log to, 0 for primary, 1 for secondary"
+    ]
+  },
+  {
+    "name": "adcs_get_sd_log_config",
+    "tcmd_func": "TCMDEXEC_adcs_get_sd_log_config",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Retrieve the current ADCS SD log configuration\n@param args_str\n- Arg 0: which log to retrieve the configuration for (1 or 2)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "which log to retrieve the configuration for (1 or 2)"
+    ]
+  },
+  {
+    "name": "adcs_format_sd",
+    "tcmd_func": "TCMDEXEC_adcs_format_sd",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Instruct the ADCS to format the SD card\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_download_index_file",
+    "tcmd_func": "TCMDEXEC_adcs_download_index_file",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Get the list of downloadable files from the ADCS SD card as log messages.\n@param args_str\n- Arg 0: Offset: The offset index to start reading (starts at 0).\n- Arg 1: Length: The number of files to get (limited to 32). 0 to request the max.\n@return 0 on success, >0 on error\n@note Despite its name, this telecommand does not download any files nor write to LittleFS.",
+    "argument_descriptions": [
+      "Offset: The offset index to start reading (starts at 0).",
+      "Length: The number of files to get (limited to 32). 0 to request the max."
+    ]
+  },
+  {
+    "name": "adcs_set_commissioning_modes",
+    "tcmd_func": "TCMDEXEC_adcs_set_commissioning_modes",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Set the run, power control, estimation, and control parameters for a given commissioning step\n@note If a commissioning step requires other steps such as estimation parameters or TLMs, those must be supplied separately.\n@param args_str\n- Arg 0: Which commissioning step to set the modes for (1-18)\n- Arg 1: Timeout in seconds before reverting to no control (0 = indefinite)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Which commissioning step to set the modes for (1-18)",
+      "Timeout in seconds before reverting to no control (0 = indefinite)"
+    ]
+  },
+  {
+    "name": "adcs_erase_sd_file_by_index",
+    "tcmd_func": "TCMDEXEC_adcs_erase_sd_file_by_index",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Instruct the ADCS to erase a file from the SD card\n@param args_str\n- Arg 0: Index of the file to erase\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Index of the file to erase"
+    ]
+  },
+  {
+    "name": "adcs_erase_sd_file_by_checksum",
+    "tcmd_func": "TCMDEXEC_adcs_erase_sd_file_by_checksum",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Instruct the ADCS to erase a file from the SD card\n@param args_str\n- Arg 0: CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)"
+    ]
+  },
+  {
+    "name": "adcs_exit_bootloader",
+    "tcmd_func": "TCMDEXEC_adcs_exit_bootloader",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: If the ADCS is currently stuck in the bootloader, run the internal flash program (CubeACP) to exit the bootloader\n@note This command will do nothing if not in the bootloader\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_convert_to_jpg_by_index",
+    "tcmd_func": "TCMDEXEC_adcs_convert_to_jpg_by_index",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Instruct the ADCS to convert an SD card file to JPG format\n@param args_str\n- Arg 0: Index of the file to convert\n- Arg 1: Quality factor (1 is the most compressed and lossy, 100 is the least)\n- Arg 2: White balance\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Index of the file to convert",
+      "Quality factor (1 is the most compressed and lossy, 100 is the least)",
+      "White balance"
+    ]
+  },
+  {
+    "name": "adcs_convert_to_jpg_by_checksum",
+    "tcmd_func": "TCMDEXEC_adcs_convert_to_jpg_by_checksum",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Instruct the ADCS to convert an SD card file to JPG format\n@param args_str\n- Arg 0: The CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)\n- Arg 1: Quality factor (1 is the most compressed and lossy, 100 is the least)\n- Arg 2: White balance\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "The CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)",
+      "Quality factor (1 is the most compressed and lossy, 100 is the least)",
+      "White balance"
+    ]
+  },
+  {
+    "name": "adcs_get_wheel_currents",
+    "tcmd_func": "TCMDEXEC_adcs_get_wheel_currents",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the reaction wheel current values from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_get_cubesense_currents",
+    "tcmd_func": "TCMDEXEC_adcs_get_cubesense_currents",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the CubeSense current values from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "adcs_get_misc_currents",
+    "tcmd_func": "TCMDEXEC_adcs_get_misc_currents",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Request the CubeStar (unused) and magnetorquer current values as well as the microcontroller temperature value from the ADCS\n@param args_str\n- No arguments for this command\n@return 0 on success, >0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "log_set_sink_enabled_state",
+    "tcmd_func": "TCMDEXEC_log_set_sink_enabled_state",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Set a LOG sink's enabled state\n@param args_str\n- Arg 0: Sink enum value\n- Arg 1: Enabled? 0: disable sink, 1: enable sink\n@details FrontierSat LOG sinks\nLOG_SINK_UHF_RADIO = 1\nLOG_SINK_FILE = 2\nLOG_SINK_UMBILICAL_UART = 4",
+    "argument_descriptions": [
+      "Sink enum value",
+      "Enabled? 0: disable sink, 1: enable sink"
+    ]
+  },
+  {
+    "name": "log_set_system_file_logging_enabled_state",
+    "tcmd_func": "TCMDEXEC_log_set_system_file_logging_enabled_state",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Set a LOG subsystem's file logging enabled state\n@param args_str\n- Arg 0: Subsystem enum value\n- Arg 1: Enabled? 0: disable file logging, 1: enable file logging\n@details FrontierSat LOG subsystems\nLOG_SYSTEM_OBC = 1\nLOG_SYSTEM_UHF_RADIO = 2\nLOG_SYSTEM_UMBILICAL_UART = 4\nLOG_SYSTEM_GNSS = 8\nLOG_SYSTEM_MPI = 16\nLOG_SYSTEM_EPS = 32\nLOG_SYSTEM_BOOM = 64\nLOG_SYSTEM_ADCS = 128\nLOG_SYSTEM_LFS = 256\nLOG_SYSTEM_FLASH = 512\nLOG_SYSTEM_ANTENNA_DEPLOY = 1024\nLOG_SYSTEM_LOG = 2048\nLOG_SYSTEM_TELECOMMAND = 4096\nLOG_SYSTEM_UNIT_TEST = 8192",
+    "argument_descriptions": [
+      "Subsystem enum value",
+      "Enabled? 0: disable file logging, 1: enable file logging"
+    ]
+  },
+  {
+    "name": "log_report_all_sink_enabled_states",
+    "tcmd_func": "TCMDEXEC_log_report_all_sink_enabled_states",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Report all LOG sink enable states",
+    "argument_descriptions": null
+  },
+  {
+    "name": "log_report_all_system_file_logging_states",
+    "tcmd_func": "TCMDEXEC_log_report_all_system_file_logging_states",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Report all LOG subsystem file logging states",
+    "argument_descriptions": null
+  },
+  {
+    "name": "log_set_sink_debugging_messages_state",
+    "tcmd_func": "TCMDEXEC_log_set_sink_debugging_messages_state",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Enable or disable debugging messages for LOG sink\n@param args_str\n- Arg 0: Sink enum\n- Arg 1: State 0: disable debug messages, 1: enable debug messages\n@details FrontierSat LOG sinks\nLOG_SINK_UHF_RADIO = 1\nLOG_SINK_FILE = 2\nLOG_SINK_UMBILICAL_UART = 4",
+    "argument_descriptions": [
+      "Sink enum",
+      "State 0: disable debug messages, 1: enable debug messages"
+    ]
+  },
+  {
+    "name": "log_set_system_severity_mask",
+    "tcmd_func": "TCMDEXEC_log_set_system_severity_mask",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: set the severity levels that a system will log\n@param args_str\n- Arg 0: Subsystem enum\n- Arg 1: severity mask\n@details Allows fine-grained control over what severities a subsystem will log\nFrontierSat subsystems\nLOG_SYSTEM_OBC = 1\nLOG_SYSTEM_UHF_RADIO = 2\nLOG_SYSTEM_UMBILICAL_UART = 4\nLOG_SYSTEM_GNSS = 8\nLOG_SYSTEM_MPI = 16\nLOG_SYSTEM_EPS = 32\nLOG_SYSTEM_BOOM = 64\nLOG_SYSTEM_ADCS = 128\nLOG_SYSTEM_LFS = 256\nLOG_SYSTEM_FLASH = 512\nLOG_SYSTEM_ANTENNA_DEPLOY = 1024\nLOG_SYSTEM_LOG = 2048\nLOG_SYSTEM_TELECOMMAND = 4096\nLOG_SYSTEM_UNIT_TEST = 8192\n\nLOG severity\nLOG_SEVERITY_DEBUG = 1\nLOG_SEVERITY_NORMAL = 2\nLOG_SEVERITY_WARNING = 4\nLOG_SEVERITY_ERROR = 8\nLOG_SEVERITY_CRITICAL = 16\n",
+    "argument_descriptions": [
+      "Subsystem enum",
+      "severity mask"
+    ]
+  },
+  {
+    "name": "log_set_system_debugging_messages_state",
+    "tcmd_func": "TCMDEXEC_log_set_system_debugging_messages_state",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Enable or disable debugging messages for LOG subsystem\n@param args_str\n- Arg 0: Subsystem enum\n- Arg 1: State 0: disable debug messages, 1: enable debug messages\n@details FrontierSat LOG subsystems\nLOG_SYSTEM_OBC = 1\nLOG_SYSTEM_UHF_RADIO = 2\nLOG_SYSTEM_UMBILICAL_UART = 4\nLOG_SYSTEM_GNSS = 8\nLOG_SYSTEM_MPI = 16\nLOG_SYSTEM_EPS = 32\nLOG_SYSTEM_BOOM = 64\nLOG_SYSTEM_ADCS = 128\nLOG_SYSTEM_LFS = 256\nLOG_SYSTEM_FLASH = 512\nLOG_SYSTEM_ANTENNA_DEPLOY = 1024\nLOG_SYSTEM_LOG = 2048\nLOG_SYSTEM_TELECOMMAND = 4096\nLOG_SYSTEM_UNIT_TEST = 8192",
+    "argument_descriptions": [
+      "Subsystem enum",
+      "State 0: disable debug messages, 1: enable debug messages"
+    ]
+  },
+  {
+    "name": "log_report_messages_from_memory",
+    "tcmd_func": "TCMDEXEC_log_report_messages_from_memory",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Report log messages from memory into response_output_buf (offset + count style)\n@param args_str\n- Arg 0: Offset of first log message to report (0 = most recent)\n- Arg 1: Number of log messages to report (or 0 for all messages)\n@note If offset is >= memory table size, offset is set to 0. If count is > memory table size, count is set to memory table size.",
+    "argument_descriptions": [
+      "Offset of first log message to report (0 = most recent)",
+      "Number of log messages to report (or 0 for all messages)"
+    ]
+  },
+  {
+    "name": "log_report_n_latest_messages_from_memory",
+    "tcmd_func": "TCMDEXEC_log_report_n_latest_messages_from_memory",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Report the N latest log messages into response_output_buf\n@param args_str\n- Arg 0: Number of latest log messages to report\n@note Recommended to use `log_report_messages_from_memory` instead.",
+    "argument_descriptions": [
+      "Number of latest log messages to report"
+    ]
+  },
+  {
+    "name": "freetos_list_tasks_jsonl",
+    "tcmd_func": "TCMDEXEC_freetos_list_tasks_jsonl",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand that return metadata regarding Tasks from FreeRTOS\n@param args_str No arguments expected\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0 if successful, >0 if an error occurred (but hello_world can't return an error)",
+    "argument_descriptions": []
+  },
+  {
+    "name": "freertos_demo_stack_usage",
+    "tcmd_func": "TCMDEXEC_freertos_demo_stack_usage",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Demo using stack memory by allocating a Variable-Length Array (VLA) on the stack.\n@param args_str\n- Arg 0: num_bytes (uint64_t) - The number of elements to allocate in the VLA. <=1_000_000.\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "num_bytes (uint64_t) - The number of elements to allocate in the VLA. <=1_000_000."
+    ]
+  },
+  {
+    "name": "eps_watchdog",
+    "tcmd_func": "TCMDEXEC_eps_watchdog",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Triggers/services the EPS watchdog. No args.\n@param args_str No arguments.\n@return 0 on success, 1 on failure.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "eps_system_reset",
+    "tcmd_func": "TCMDEXEC_eps_system_reset",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_RECOVERY_OR_EXPERT",
+    "full_docstring": "@brief Resets the EPS system.\n@param args_str No arguments.\n@return 0 on success, 1 on failure.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "eps_no_operation",
+    "tcmd_func": "TCMDEXEC_eps_no_operation",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Calls the EPS no-op (no operation) command. Likely not useful.\n@param args_str No arguments.\n@return 0 on success, 1 on failure.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "eps_cancel_operation",
+    "tcmd_func": "TCMDEXEC_eps_cancel_operation",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Calls the EPS cancel operation command. Likely not useful.\n@param args_str No arguments.\n@return 0 on success, 1 on failure.\n@note This command likely isn't useful, as telecommands cannot be trigger simultaneously, and\nthus another command to the EPS cannot really be cancelled from here.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "eps_switch_to_mode",
+    "tcmd_func": "TCMDEXEC_eps_switch_to_mode",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Switches the EPS to \"nominal\" or \"safety\" mode.\n@param args_str\n- Arg 0: New mode to switch to. Either \"nominal\" or \"safety\". Case-insensitive.\n@return 0 on success, 1 on failure.\n@note See EPS Software ICD, Page 12, Section 3 (Functional Description) for state/mode definitions.",
+    "argument_descriptions": [
+      "New mode to switch to. Either \"nominal\" or \"safety\". Case-insensitive."
+    ]
+  },
+  {
+    "name": "eps_set_channel_enabled",
+    "tcmd_func": "TCMDEXEC_eps_set_channel_enabled",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Sets the EPS channel to be enabled (on) or disabled (off).\n@param args_str\n- Arg 0: The channel name or number (case-insensitive string).\n- Arg 1: 1 to enable (power on), 0 to disable (power off)\n@return 0 on success, >0 on failure\n@note Channel name argument: A lowercase c-string of the channel name (e.g., \"mpi\"), or a number\nrepresenting the channel number (e.g., \"1\" or \"16\").\nValid string values: \"vbatt_stack\", \"stack_5v\", \"stack_3v3\", \"camera\", \"uhf_antenna_deploy\",\n\"gnss\", \"mpi_5v\", \"mpi_12v\", \"boom\".",
+    "argument_descriptions": [
+      "The channel name or number (case-insensitive string).",
+      "1 to enable (power on), 0 to disable (power off)"
+    ]
+  },
+  {
+    "name": "eps_get_system_status_json",
+    "tcmd_func": "TCMDEXEC_eps_get_system_status_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS system status, and display it as a JSON string.\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_pdu_overcurrent_fault_state_json",
+    "tcmd_func": "TCMDEXEC_eps_get_pdu_overcurrent_fault_state_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS PDU (Power Distribution Unit) overcurrent fault status, and display it as a JSON string.\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_pbu_abf_placed_state_json",
+    "tcmd_func": "TCMDEXEC_eps_get_pbu_abf_placed_state_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS PBU (Power Battery Unit) ABF placed status, and display it as a JSON string.\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_pdu_data_for_channel_json",
+    "tcmd_func": "TCMDEXEC_eps_get_pdu_data_for_channel_json",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Gets the Voltage, Current, and Power for a single channel on the EPS.\n@param args_str\n- Arg 0: The channel name or number (case-insensitive string).\n@return 0 on success, >0 on failure.\n@note Channel name argument: A lowercase c-string of the channel name (e.g., \"mpi\"), or a number\nrepresenting the channel number (e.g., \"1\" or \"16\").\nValid string values: \"vbatt_stack\", \"stack_5v\", \"stack_3v3\", \"camera\", \"uhf_antenna_deploy\",\n\"gnss\", \"mpi_5v\", \"mpi_12v\", \"boom\".",
+    "argument_descriptions": [
+      "The channel name or number (case-insensitive string)."
+    ]
+  },
+  {
+    "name": "eps_get_pdu_housekeeping_data_eng_json",
+    "tcmd_func": "TCMDEXEC_eps_get_pdu_housekeeping_data_eng_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS PDU (Power Distribution Unit) housekeeping data, and display it as a JSON string.\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_pdu_active_channels_data_json",
+    "tcmd_func": "TCMDEXEC_eps_get_pdu_active_channels_data_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS PDU (Power Distribution Unit) housekeeping data, and display it as a short JSON string.\n@return 0 on success, >0 on failure.\n@note Emphasizes total info, and enabled channels only.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_pdu_active_channels_data_run_avg_json",
+    "tcmd_func": "TCMDEXEC_eps_get_pdu_active_channels_data_run_avg_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS PDU (Power Distribution Unit) housekeeping data running average, and display it as a short JSON string.\n@return 0 on success, >0 on failure.\n@note Emphasizes total info, and enabled channels only.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_pdu_housekeeping_data_run_avg_json",
+    "tcmd_func": "TCMDEXEC_eps_get_pdu_housekeeping_data_run_avg_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS PDU (Power Distribution Unit) housekeeping data (running average), and display it as a JSON string.\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_pbu_housekeeping_data_eng_json",
+    "tcmd_func": "TCMDEXEC_eps_get_pbu_housekeeping_data_eng_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS PBU (Power Battery Unit) housekeeping data, and display it as a JSON string.\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_pbu_housekeeping_data_run_avg_json",
+    "tcmd_func": "TCMDEXEC_eps_get_pbu_housekeeping_data_run_avg_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS PBU (Power Battery Unit) housekeeping data (running average), and display it as a JSON string.\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_pcu_housekeeping_data_eng_json",
+    "tcmd_func": "TCMDEXEC_eps_get_pcu_housekeeping_data_eng_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS PCU (Power Conditioning Unit, solar panel MPPT) housekeeping data, and display it as a JSON string.\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_pcu_housekeeping_data_run_avg_json",
+    "tcmd_func": "TCMDEXEC_eps_get_pcu_housekeeping_data_run_avg_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS PCU (Power Conditioning Unit, solar panel MPPT) housekeeping data (running average), and display it as a JSON string.\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_piu_housekeeping_data_eng_json",
+    "tcmd_func": "TCMDEXEC_eps_get_piu_housekeeping_data_eng_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Gets the EPS PIU (Power Integrated Unit, info about all systems) housekeeping data, and returns it as a JSON string.\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_piu_housekeeping_data_run_avg_json",
+    "tcmd_func": "TCMDEXEC_eps_get_piu_housekeeping_data_run_avg_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get the EPS PIU (Power Integrated Unit, info about all systems) housekeeping data (running average), and display it as a JSON string.\n@return 0 on success, >0 on failure.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_enabled_channels_json",
+    "tcmd_func": "TCMDEXEC_eps_get_enabled_channels_json",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": null,
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_get_current_battery_percent",
+    "tcmd_func": "TCMDEXEC_eps_get_current_battery_percent",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Get current battery voltage and percent from EPS's PBU.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "eps_power_management_set_current_threshold",
+    "tcmd_func": "TCMDEXEC_eps_power_management_set_current_threshold",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Sets the EPS power managements max sustained current for the specified channel.\n@param args_str\n- Arg 0: The channel name or number (case-insensitive string).\n- Arg 1: Threshold current (in mA) to set.\n@return 0 on success, >0 on failure\n@note Valid string values (Arg 0): \"vbatt_stack\", \"stack_5v\", \"stack_3v3\", \"camera\",\n\"uhf_antenna_deploy\", \"gnss\", \"mpi_5v\", \"mpi_12v\", \"boom\".",
+    "argument_descriptions": [
+      "The channel name or number (case-insensitive string).",
+      "Threshold current (in mA) to set."
+    ]
+  },
+  {
+    "name": "agenda_fetch_json_grouped",
+    "tcmd_func": "TCMDEXEC_agenda_fetch_json_grouped",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Fetches the active agendas and writes a minified JSON dict-of-lists to the response buffer.\n@param args_str No arguments.\n@param response_output_buf Buffer to write the JSON output to.\n@param response_output_buf_size Size of the response buffer.\n@return 0 on success, 1 if there are no pending entries, 2 if the buffer was too small (agenda too long).",
+    "argument_descriptions": []
+  },
+  {
+    "name": "agenda_fetch_logged_jsonl",
+    "tcmd_func": "TCMDEXEC_agenda_fetch_logged_jsonl",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Fetch all pending agenda items, and log them each as JSONL\n@param args_str No arguments.\n@return 0 on success, 1 if there are no active pending agenda items.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "agenda_delete_all",
+    "tcmd_func": "TCMDEXEC_agenda_delete_all",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Delete all agenda entries.\n@param args_str No arguments needed\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0 on success",
+    "argument_descriptions": []
+  },
+  {
+    "name": "agenda_delete_by_tssent",
+    "tcmd_func": "TCMDEXEC_agenda_delete_by_tssent",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Delete agenda entry by tssent timestamp\n@param args_str\n- Arg 0: Timestamp sent (uint64_t) - The tssent timestamp of the agenda entry to delete.\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "Timestamp sent (uint64_t) - The tssent timestamp of the agenda entry to delete."
+    ]
+  },
+  {
+    "name": "agenda_delete_by_name",
+    "tcmd_func": "TCMDEXEC_agenda_delete_by_name",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Delete all agenda entries with a given telecommand name.\n@param args_str\n- Arg 0: telecommand name (string) - The name of the telecommand function in the agenda to delete. (e.g, hello_world)\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0 on success, > 0 on error",
+    "argument_descriptions": [
+      "telecommand name (string) - The name of the telecommand function in the agenda to delete. (e.g, hello_world)"
+    ]
+  },
+  {
+    "name": "agenda_enqueue_from_file",
+    "tcmd_func": "TCMDEXEC_agenda_enqueue_from_file",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Enqueue telecommands from a file.\n@param args_str\n- Arg 0: File name (string) - The name of the file to enqueue telecommands from.\n- Arg 1: min_tsexec_inclusive (u64) - Filter to @tsexec >= value (nominal: 0)\n- Arg 2: max_tsexec_exclusive (u64) - Filter to @tsexec < value (set to 0 for no filter)\n@return 0 on success, > 0 on error",
+    "argument_descriptions": [
+      "File name (string) - The name of the file to enqueue telecommands from.",
+      "min_tsexec_inclusive (u64) - Filter to @tsexec >= value (nominal: 0)",
+      "max_tsexec_exclusive (u64) - Filter to @tsexec < value (set to 0 for no filter)"
+    ]
+  },
+  {
+    "name": "mpi_send_command_get_response_hex",
+    "tcmd_func": "TCMDEXEC_mpi_send_command_get_response_hex",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Send a configuration command & params (IF ANY) to the MPI encoded in hex\n@param args_str\n- Arg 0: Hex-encoded string representing the configuration command + arguments (IF ANY) to send to the MPI, INCLUDING 'TC' (0x54 0x43)\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0: Success, >0 error code",
+    "argument_descriptions": [
+      "Hex-encoded string representing the configuration command + arguments (IF ANY) to send to the MPI, INCLUDING 'TC' (0x54 0x43)"
+    ]
+  },
+  {
+    "name": "mpi_demo_tx_to_mpi",
+    "tcmd_func": "TCMDEXEC_mpi_demo_tx_to_mpi",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_GROUND_USAGE_ONLY",
+    "full_docstring": "@brief Sends a message over UART to the MPI.\n@param args_str No args.\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0: Success, >0: Failure",
+    "argument_descriptions": []
+  },
+  {
+    "name": "mpi_set_transceiver_mode",
+    "tcmd_func": "TCMDEXEC_mpi_set_transceiver_mode",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Manually sets the MPI's UART transceiver state.\n@param args_str\n- Arg 0: The target mode - \"MISO\" (from MPI), \"MOSI\" (to MPI), \"DUPLEX\", or anything else disables it\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0: Success, >0: Failure\n@note Nominally, not required. Useful for manually sending UART messages with `uart_send_hex()` tcmd.",
+    "argument_descriptions": [
+      "The target mode - \"MISO\" (from MPI), \"MOSI\" (to MPI), \"DUPLEX\", or anything else disables it"
+    ]
+  },
+  {
+    "name": "mpi_enable_active_mode",
+    "tcmd_func": "TCMDEXEC_mpi_enable_active_mode",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Enables systems to start receiving data actively from MPI and storing using LFS.\n@param args_str\n- Arg 0: File name as a string\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0: Success, >0: Failure",
+    "argument_descriptions": [
+      "File name as a string"
+    ]
+  },
+  {
+    "name": "mpi_disable_active_mode",
+    "tcmd_func": "TCMDEXEC_mpi_disable_active_mode",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Sets the state to not send or receive data from MPI.\n@param args_str No args.\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0: Success, >0: Failure",
+    "argument_descriptions": []
+  },
+  {
+    "name": "stm32_internal_flash_read",
+    "tcmd_func": "TCMDEXEC_stm32_internal_flash_read",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_RECOVERY_OR_EXPERT",
+    "full_docstring": "@brief Read data from the internal flash bank\n@param args_str\n- Arg 0: The address to start reading from in hex\n- Arg 1: The number of bytes to read as a uint64_t\n@return 0 on success, > 0 on error",
+    "argument_descriptions": [
+      "The address to start reading from in hex",
+      "The number of bytes to read as a uint64_t"
+    ]
+  },
+  {
+    "name": "stm32_internal_flash_write",
+    "tcmd_func": "TCMDEXEC_stm32_internal_flash_write",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_HIGH_RISK_AND_UNSAFE",
+    "full_docstring": "@brief Write data to the internal flash bank starting from address 0x08100000\n@param args_str\n- Arg 0: Address to start writing from in hex format\n- Arg 1: The data in hex format to write up to PAGESIZE bytes (0x1000 bytes)\n@note This telecommand is only for testing purposes, it is purposfully not fully fleshed out\nas there is no intention on using this. Update as needed\n@return 0 on success, > 0 on error",
+    "argument_descriptions": [
+      "Address to start writing from in hex format",
+      "The data in hex format to write up to PAGESIZE bytes (0x1000 bytes)"
+    ]
+  },
+  {
+    "name": "stm32_internal_flash_page_erase",
+    "tcmd_func": "TCMDEXEC_stm32_internal_flash_page_erase",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_HIGH_RISK_AND_UNSAFE",
+    "full_docstring": "@brief Erase a range of pages in the internal flash bank.\n@param args_str\n- Arg 0: Flash Bank to erase (1 or 2)\n- Arg 1: The starting page to erase (0-255 for bank 1, 256-511 for bank 2)\n- Arg 2: The number of pages to erase (1-256)\n@return 0 on success, > 0 on error",
+    "argument_descriptions": [
+      "Flash Bank to erase (1 or 2)",
+      "The starting page to erase (0-255 for bank 1, 256-511 for bank 2)",
+      "The number of pages to erase (1-256)"
+    ]
+  },
+  {
+    "name": "stm32_internal_flash_bank_erase",
+    "tcmd_func": "TCMDEXEC_stm32_internal_flash_bank_erase",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_HIGH_RISK_AND_UNSAFE",
+    "full_docstring": "@brief Erase an entire flash bank\n@param args_str\n- Arg 0: Flash Bank to erase (1 or 2)\n@return 0 on success, > 0 on error",
+    "argument_descriptions": [
+      "Flash Bank to erase (1 or 2)"
+    ]
+  },
+  {
+    "name": "stm32_internal_flash_get_option_bytes",
+    "tcmd_func": "TCMDEXEC_stm32_internal_flash_get_option_bytes",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_HIGH_RISK_AND_UNSAFE",
+    "full_docstring": "@brief Get the option bytes configuration from the stm32 internal flash memory\n@param args_str No args\n@return 0 on success, > 0 on error",
+    "argument_descriptions": []
+  },
+  {
+    "name": "stm32_internal_flash_get_active_flash_bank",
+    "tcmd_func": "TCMDEXEC_stm32_internal_flash_get_active_flash_bank",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_HIGH_RISK_AND_UNSAFE",
+    "full_docstring": "@brief Prints the active flash bank where the firmware boots from\n@param response_output_buf Prints the active bank",
+    "argument_descriptions": null
+  },
+  {
+    "name": "stm32_internal_flash_set_active_flash_bank",
+    "tcmd_func": "TCMDEXEC_stm32_internal_flash_set_active_flash_bank",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_HIGH_RISK_AND_UNSAFE",
+    "full_docstring": "@brief Given a 1 or 2, switches to the respective flash bank and runs the application stored there if present.\nMostly useful for switching between 2 different version of the firmware (1 will be stored in Flash Bank 1, other will be stored in Flash Bank 2)\n@param args_str\n- Arg 0: A 1 or 2. 1 to switch to the application present in Flash Bank 1, 2 to switch to the application present in Flash Bank 2\n@param response_output_buf Prints error if it occurs\n@return 0 on success, > 0 otherwise",
+    "argument_descriptions": [
+      "A 1 or 2. 1 to switch to the application present in Flash Bank 1, 2 to switch to the application present in Flash Bank 2"
+    ]
+  },
+  {
+    "name": "stm32_internal_flash_write_file_to_internal_flash",
+    "tcmd_func": "TCMDEXEC_stm32_internal_flash_write_file_to_internal_flash",
+    "description": null,
+    "number_of_args": 4,
+    "readiness_level": "TCMD_READINESS_LEVEL_HIGH_RISK_AND_UNSAFE",
+    "full_docstring": "@brief Telecommand: Write a file to internal flash memory from LittleFS.\n@param args_str\n- Arg 0: File name to read from LittleFS\n- Arg 1: Length to read from the file (in bytes). The maximum length to read is 4096 bytes (4kB).\n- Arg 2: Offset within the file to start reading (in bytes)\n- Arg 3: Address in internal flash memory to write to (in base 10)\n@note To use properly:\n- The internal flash memory region must be erased before writing.\n- The address must be in the main flash memory region (0x08000000 to 0x081FFFFF).",
+    "argument_descriptions": [
+      "File name to read from LittleFS",
+      "Length to read from the file (in bytes). The maximum length to read is 4096 bytes (4kB).",
+      "Offset within the file to start reading (in bytes)",
+      "Address in internal flash memory to write to (in base 10)"
+    ]
+  },
+  {
+    "name": "stm32_internal_flash_calculate_sha256",
+    "tcmd_func": "TCMDEXEC_stm32_internal_flash_calculate_sha256",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_RECOVERY_OR_EXPERT",
+    "full_docstring": "@brief Calculates the SHA256 hash of a range of STM32 internal flash.\n@param args_str\n- Arg 0: Start address in flash memory as uint32_t\n- Arg 1: Number of bytes to hash as uint32_t\n@param response_output_buf Outputs the SHA256 hash as hex (wrapped in JSON)\n@return 0 on success, >0 on error\n@note Common useful values:\n- Start of BANK_1 (address): 0x08000000 = 134217728\n- Start of BANK_2 (address): 0x08100000 = 135266304\n- Length of each bank: 0x100000 = 1048576",
+    "argument_descriptions": [
+      "Start address in flash memory as uint32_t",
+      "Number of bytes to hash as uint32_t"
+    ]
+  },
+  {
+    "name": "ant_reset",
+    "tcmd_func": "TCMDEXEC_ant_reset",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Resets the specified antenna deployment system's microcontroller\n@param args_str\n- Arg 0: specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"\n@return 0 on success, > 0 otherwise",
+    "argument_descriptions": [
+      "specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\""
+    ]
+  },
+  {
+    "name": "ant_arm_antenna_system",
+    "tcmd_func": "TCMDEXEC_ant_arm_antenna_system",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Arm the antenna deploy system\n@param args_str\n- Arg 0: specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\""
+    ]
+  },
+  {
+    "name": "ant_disarm_antenna_system",
+    "tcmd_func": "TCMDEXEC_ant_disarm_antenna_system",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Disarms the specified antenna deploy system's mcu\n@param args_str\n- Arg 0: specifies which mcu on the antenna deployment system to disarm, and which i2c bus to use\n@return 0 on success, 0 > otherwise",
+    "argument_descriptions": [
+      "specifies which mcu on the antenna deployment system to disarm, and which i2c bus to use"
+    ]
+  },
+  {
+    "name": "ant_deploy_antenna",
+    "tcmd_func": "TCMDEXEC_ant_deploy_antenna",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief  Telecommand: Initiates deployment of the selected antenna\n@param args_str\n- Arg 0: specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Either \"A\" or \"B\"\n- Arg 1: antenna number. between 1-4\n- Arg 2: Activation time in seconds\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Either \"A\" or \"B\"",
+      "antenna number. between 1-4",
+      "Activation time in seconds"
+    ]
+  },
+  {
+    "name": "ant_start_automated_antenna_deployment",
+    "tcmd_func": "TCMDEXEC_ant_start_automated_antenna_deployment",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief begins deployment of all antennas, one by one.\n@param args_str\n- Arg 0: specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"\n- Arg 1: Activation time in seconds\n@return returns 0 on success, > 0 otherwise",
+    "argument_descriptions": [
+      "specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"",
+      "Activation time in seconds"
+    ]
+  },
+  {
+    "name": "ant_deploy_antenna_with_override",
+    "tcmd_func": "TCMDEXEC_ant_deploy_antenna_with_override",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief  Telecommand: Initiates deployment of the selected antenna, ignoring whether the antennas current status is deployed.\n@param args_str\n- Arg 0: specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"\n- Arg 1: antenna number. between 1-4\n- Arg 2: Activation time in seconds\n@return 0 on successful communication, >0 on communications error",
+    "argument_descriptions": [
+      "specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"",
+      "antenna number. between 1-4",
+      "Activation time in seconds"
+    ]
+  },
+  {
+    "name": "ant_cancel_deployment_system_activation",
+    "tcmd_func": "TCMDEXEC_ant_cancel_deployment_system_activation",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Cancels any active attempts to deploy an antenna\n@param args_str\n- Arg 0: specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"\n@return 0 on successful communication, > 0 on communications error",
+    "argument_descriptions": [
+      "specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\""
+    ]
+  },
+  {
+    "name": "ant_measure_temp",
+    "tcmd_func": "TCMDEXEC_ant_measure_temp",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Measures the temperature of the antenna controller in centi-degrees celsius\n@param args_str\n- Arg 0: specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"\n@return 0 on success, >0 on error",
+    "argument_descriptions": [
+      "specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\""
+    ]
+  },
+  {
+    "name": "ant_report_deployment_status",
+    "tcmd_func": "TCMDEXEC_ant_report_deployment_status",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Prints the deployment status of all antennas\n@param args_str\n- Arg 0: specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"\n@return 0 on successful communication, > 0 on communications error",
+    "argument_descriptions": [
+      "specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\""
+    ]
+  },
+  {
+    "name": "ant_report_antenna_deployment_activation_count",
+    "tcmd_func": "TCMDEXEC_ant_report_antenna_deployment_activation_count",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Prints the number of times deployment was attempted on the selected antenna\n@param args_str\n- Arg 0: specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"\n- Arg 1: the antenna to check, between 1-4\n@return 0 on successful communication, > 0 on communications error",
+    "argument_descriptions": [
+      "specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"",
+      "the antenna to check, between 1-4"
+    ]
+  },
+  {
+    "name": "ant_report_antenna_deployment_activation_time",
+    "tcmd_func": "TCMDEXEC_ant_report_antenna_deployment_activation_time",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Prints amount of time the deployment system has been active for for the selected antenna\n@param args_str\n- Arg 0: specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"\n- Arg 1: the antenna to check, between 1-4\n@return 0 on successful communication, > 0 on communications error",
+    "argument_descriptions": [
+      "specifies which mcu on the antenna deployment system to transmit to, and which i2c bus to use. Pass either \"A\" or \"B\"",
+      "the antenna to check, between 1-4"
+    ]
+  },
+  {
+    "name": "obc_read_temperature_complex",
+    "tcmd_func": "TCMDEXEC_obc_read_temperature_complex",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief  Reads the temperature from the STDS75DS2F and stores it in the provided variable temperature.\nTemperature range is -55 to 125 degrees celsius with +/- 3 degrees celsius accuracy over the whole range.\n@param args_str\n- Arg 0: Precision we want the temperature to be (9-12 bits).\n@return 0 if successful, 1 if error.\n@note There are better ways to get the temperature.",
+    "argument_descriptions": [
+      "Precision we want the temperature to be (9-12 bits)."
+    ]
+  },
+  {
+    "name": "obc_read_temperature",
+    "tcmd_func": "TCMDEXEC_obc_read_temperature",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Reads the temperature from the STDS75DS2F in centi-Celsius.\n@return 0 if successful, >0 if error.\n@note Temperature range is -55 to 125 degrees celsius with +/- 3 degrees celsius accuracy over the whole range.",
+    "argument_descriptions": null
+  },
+  {
+    "name": "obc_adc_read_vbat_voltage",
+    "tcmd_func": "TCMDEXEC_obc_adc_read_vbat_voltage",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Read the battery voltage using the ADC. Returns the result in mV. Voltage divider ratio is already applied.\n@param args_str No arguments.\n@return",
+    "argument_descriptions": []
+  },
+  {
+    "name": "obc_set_stm32_sysclk_to_hse",
+    "tcmd_func": "TCMDEXEC_obc_set_stm32_sysclk_to_hse",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Change the STM32 SYSCLK clock from the HSI to the HSE.\n@param args_str No arguments.\n@return 0 on success.\n@details On bootup, the OBC will use the HSI as its clock, as the HSE may have a PCB design\ndefect, where the output capacitance of the HSE clock is too high.\nRunning this command will switch the SYSCLK from the High-Speed Internal (HSI) at 16 MHz\nto the probably-fine-but-maybe-questionable High-Speed External (HSE) clock at 25 MHz.\nThe main benefit is that the HSE clock is a Temperature-Compensated Crystal Oscillator (TXCO),\nand thus maintains the system clock much more reliably.\n@note To switch back to the HSI, simply reboot.\n@note If the HSE fails, the Independent Watchdog will reset. Thus, this reconfiguration is low-risk.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "comms_set_rf_switch_control_mode",
+    "tcmd_func": "TCMDEXEC_comms_set_rf_switch_control_mode",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FLIGHT_TESTING",
+    "full_docstring": "@brief Sets the state of the dipole switch on the OBC to either Antenna 1 or Antenna 2.\n@param args_str\n- Arg 0: Enum: \"toggle_before_beacon\" (default), \"ant1\", \"ant2\", \"adcs\", \"adcs_flipped\". Case-insensitive.\n@return 0 on success, 1 on error.",
+    "argument_descriptions": [
+      "Enum: \"toggle_before_beacon\" (default), \"ant1\", \"ant2\", \"adcs\", \"adcs_flipped\". Case-insensitive."
+    ]
+  },
+  {
+    "name": "comms_get_rf_switch_info",
+    "tcmd_func": "TCMDEXEC_comms_get_rf_switch_info",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Gets the current RF switch control mode and the current antenna state.\n@param args_str No args.\n@return",
+    "argument_descriptions": []
+  },
+  {
+    "name": "comms_bulk_file_downlink_start",
+    "tcmd_func": "TCMDEXEC_comms_bulk_file_downlink_start",
+    "description": null,
+    "number_of_args": 3,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Initiate a bulk file downlink over the UHF radio.\n@param args_str\n- Arg 0: File path to downlink as string\n- Arg 1: Start offset in file (uint32)\n- Arg 2: The maximum number of bytes to downlink. Maximum value is 1000000 (1 MB) by default, for safety (to avoid a very very long-running downlink chain). Values >1 MB will be limited to 1 MB, and value 0 will be set to 1 MB.\n@return 0 on success. Non-zero on failure. -2 = File does not exist.\n@note 1 MB takes about 15 minutes to downlink at 9600 baud.\n@note This function is safe to call at any point (including mid-downlink, or mid-pause).\nIt will close the previous file and start a new downlink.",
+    "argument_descriptions": [
+      "File path to downlink as string",
+      "Start offset in file (uint32)",
+      "The maximum number of bytes to downlink. Maximum value is 1000000 (1 MB) by default, for safety (to avoid a very very long-running downlink chain). Values >1 MB will be limited to 1 MB, and value 0 will be set to 1 MB."
+    ]
+  },
+  {
+    "name": "comms_bulk_file_downlink_pause",
+    "tcmd_func": "TCMDEXEC_comms_bulk_file_downlink_pause",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Pause bulk file downlink\n@param args_str (unused)",
+    "argument_descriptions": null
+  },
+  {
+    "name": "comms_bulk_file_downlink_resume",
+    "tcmd_func": "TCMDEXEC_comms_bulk_file_downlink_resume",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": null,
+    "argument_descriptions": null
+  },
+  {
+    "name": "comms_bulk_uplink_open_file",
+    "tcmd_func": "TCMDEXEC_comms_bulk_uplink_open_file",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Open a file for bulk uplink\n@param args_str\n- Arg 0: File path as string\n- Arg 1: Mode enum as string: \"truncate\" or \"append\" (case-insensitive)",
+    "argument_descriptions": [
+      "File path as string",
+      "Mode enum as string: \"truncate\" or \"append\" (case-insensitive)"
+    ]
+  },
+  {
+    "name": "comms_bulk_uplink_close_file",
+    "tcmd_func": "TCMDEXEC_comms_bulk_uplink_close_file",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Close the currently open bulk uplink file\n@param args_str No arguments",
+    "argument_descriptions": null
+  },
+  {
+    "name": "comms_bulk_uplink_write_bytes_hex",
+    "tcmd_func": "TCMDEXEC_comms_bulk_uplink_write_bytes_hex",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Write hex bytes to the currently open bulk uplink file.\n@param args_str\n- Arg 0: Hex string (e.g. \"DEADBEEF\" or \"DE AD BE EF\")\n@note This telecommand has a short-form alias \"bulkup16\".",
+    "argument_descriptions": [
+      "Hex string (e.g. \"DEADBEEF\" or \"DE AD BE EF\")"
+    ]
+  },
+  {
+    "name": "bulkup16",
+    "tcmd_func": "TCMDEXEC_bulkup16",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Write hex bytes to the currently open bulk uplink file\n@param args_str\n- Arg 0: Hex string (e.g. \"DEADBEEF\" or \"DE AD BE EF\")\n@note This is an alias for the `comms_bulk_uplink_write_bytes_hex` telecommand.\nThis is one of very few telecommands with short aliases, as it allows more data per command.",
+    "argument_descriptions": [
+      "Hex string (e.g. \"DEADBEEF\" or \"DE AD BE EF\")"
+    ]
+  },
+  {
+    "name": "comms_bulk_uplink_write_bytes_base64",
+    "tcmd_func": "TCMDEXEC_comms_bulk_uplink_write_bytes_base64",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Write Base64 bytes to the currently open bulk uplink file.\n@param args_str\n- Arg 0: Base64 string (e.g. \"SGVsbG8=\" converts to ASCII \"Hello\")\n@note This telecommand has a short-form alias \"bulkup64\".",
+    "argument_descriptions": [
+      "Base64 string (e.g. \"SGVsbG8=\" converts to ASCII \"Hello\")"
+    ]
+  },
+  {
+    "name": "bulkup64",
+    "tcmd_func": "TCMDEXEC_bulkup64",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Write Base64 bytes to the currently open bulk uplink file.\n@param args_str\n- Arg 0: Base64 string (e.g. \"SGVsbG8=\" converts to ASCII \"Hello\")\n@note This is an alias for the `comms_bulk_uplink_write_bytes_base64` telecommand.\nThis is one of very few telecommands with short aliases, as it allows more data per command.",
+    "argument_descriptions": [
+      "Base64 string (e.g. \"SGVsbG8=\" converts to ASCII \"Hello\")"
+    ]
+  },
+  {
+    "name": "comms_bulk_uplink_seek",
+    "tcmd_func": "TCMDEXEC_comms_bulk_uplink_seek",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Telecommand: Seek to a new position in the currently open bulk uplink file\n@param args_str\n- Arg 0: New byte offset from start of file (uint64, must fit uint32)",
+    "argument_descriptions": [
+      "New byte offset from start of file (uint64, must fit uint32)"
+    ]
+  },
+  {
+    "name": "gnss_send_cmd_ascii",
+    "tcmd_func": "TCMDEXEC_gnss_send_cmd_ascii",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Send a command to the GNSS and receive the response as ASCII.\n@param args_str\n- Arg 0: Log command to be sent to GNSS eg \"log bestxyza once\" (string)\n@param response_output_buf The buffer to write the response to\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0 on success, > 0 error",
+    "argument_descriptions": [
+      "Log command to be sent to GNSS eg \"log bestxyza once\" (string)"
+    ]
+  },
+  {
+    "name": "gnss_send_cmd_ascii_get_response_hex",
+    "tcmd_func": "TCMDEXEC_gnss_send_cmd_ascii_get_response_hex",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Send a command to the GNSS (text) and receive the response as hex.\n@param args_str\n- Arg 0: Log command to be sent to GNSS eg \"log bestxyzb once\" (string)\n@param response_output_buf The buffer to write the response to (output as hex)\n@param response_output_buf_len The maximum length of the response_output_buf (its size)\n@return 0 on success, > 0 error",
+    "argument_descriptions": [
+      "Log command to be sent to GNSS eg \"log bestxyzb once\" (string)"
+    ]
+  },
+  {
+    "name": "gnss_enable_firehose_storage_mode",
+    "tcmd_func": "TCMDEXEC_gnss_enable_firehose_storage_mode",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Enables storing data from GNSS into a file.\n@param args_str\n- Arg 0: File name as a string\n@return 0: Success, >0: Failure\n@details This feature is meant to be used in combination with the \"log bestxyza ontime <seconds>\" GNSS commands.\n@example Enable power, enable \"ontime\" logs in the GNSS (using gnss_send_cmd_ascii), then enable this mode.\n@note This telecommand does not control EPS power. You must enable the GNSS power first.",
+    "argument_descriptions": [
+      "File name as a string"
+    ]
+  },
+  {
+    "name": "gnss_disable_firehose_storage_mode",
+    "tcmd_func": "TCMDEXEC_gnss_disable_firehose_storage_mode",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Disables the GNSS firehose storage mode (closes the firehose file).\n@param args_str No args.\n@return 0: Success, >0: Failure\n@note This telecommand does not control EPS power. You must disable the GNSS power afterwards.",
+    "argument_descriptions": []
+  },
+  {
+    "name": "camera_setup",
+    "tcmd_func": "TCMDEXEC_camera_setup",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Set up the camera by powering on and changing the baudrate to 230400.\n@param args_str\n@param response_output_buf Buffer to write the response to\n@param response_output_buf_len Max length of the buffer\n@return 0 if successful, >0 if an error occurred",
+    "argument_descriptions": []
+  },
+  {
+    "name": "camera_test",
+    "tcmd_func": "TCMDEXEC_camera_test",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_RECOVERY_OR_EXPERT",
+    "full_docstring": "@brief Send the 't' test command to the camera, and check if the response is valid.\n@param args_str\n@param response_output_buf Buffer to write the response to\n@param response_output_buf_len Max length of the buffer\n@return 0 if successful, >0 if an error occurred",
+    "argument_descriptions": []
+  },
+  {
+    "name": "camera_change_baud_rate",
+    "tcmd_func": "TCMDEXEC_camera_change_baud_rate",
+    "description": null,
+    "number_of_args": 1,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_RECOVERY_OR_EXPERT",
+    "full_docstring": "@brief Debugging only. Set the baud rate of the camera to the specified value. Use `camera_setup` normally.\n@param args_str\n- Arg 1: Baudrate to change to (bits per second). 10 options from 1200 to 921600.\n@return 0 if successful, >0 if an error occurred",
+    "argument_descriptions": [
+      "Baudrate to change to (bits per second). 10 options from 1200 to 921600."
+    ]
+  },
+  {
+    "name": "camera_capture",
+    "tcmd_func": "TCMDEXEC_camera_capture",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Send telecommand to camera and capture an image. RUN CAM_SETUP BEFORE THIS EVERY TIME!\n@param args_str\n- Arg 0: filename to save the image to (max 32 chars)\n- Arg 1: lighting mode (single character: d,m,n,s)\n@param response_output_buf Buffer to write the response to\n@param response_output_buf_len Max length of the buffer\n@return 0 if successful, >0 if an error occurred",
+    "argument_descriptions": [
+      "filename to save the image to (max 32 chars)",
+      "lighting mode (single character: d,m,n,s)"
+    ]
+  },
+  {
+    "name": "boom_deploy_timed",
+    "tcmd_func": "TCMDEXEC_boom_deploy_timed",
+    "description": null,
+    "number_of_args": 2,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_RECOVERY_OR_EXPERT",
+    "full_docstring": "@brief Activate the burn wire for the specified duration.\n@param args_str\n- Arg 0: Which boom deployment channel (1=CTRL_1 or 2=CTRL_2), or 0 for both.\n- Arg 1: Duration (milliseconds), less than 14.1 seconds (<=14100 ms)\n@return 0 on success, 1-2 on parsing error, 20 on EPS failure\n@note Does not enable the EPS channel. You must manually enable the EPS channel before\ncalling this function.\n@note If you need longer than the max duration, you can of course call this function\nmultiple times back-to-back, relying on the heat capacity of the resistors to stay hot.",
+    "argument_descriptions": [
+      "Which boom deployment channel (1=CTRL_1 or 2=CTRL_2), or 0 for both.",
+      "Duration (milliseconds), less than 14.1 seconds (<=14100 ms)"
+    ]
+  },
+  {
+    "name": "boom_self_check",
+    "tcmd_func": "TCMDEXEC_boom_self_check",
+    "description": null,
+    "number_of_args": 0,
+    "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
+    "full_docstring": "@brief Run the self-check on the boom deployment system.\n@param args_str None.\n@return 0 on success, >0 on error.\n@note If this function glitches (which it shouldn't/doesn't), it has the potential to deploy the boom.",
+    "argument_descriptions": []
+  }
+]
