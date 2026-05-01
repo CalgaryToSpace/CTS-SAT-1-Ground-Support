@@ -4,7 +4,6 @@ Extracts entries from CONFIG_int_config_variables[] and CONFIG_str_config_variab
 and enriches them with docstrings found in any C source files.
 """
 
-import contextlib
 import dataclasses
 import json
 import re
@@ -55,16 +54,7 @@ class StrConfigVariable:
 def extract_variable_docstring(variable_name: str, c_code: str) -> str | None:
     """Return the docstring that immediately precedes *variable_name*'s declaration/definition.
 
-    Handles both plain declarations and extern + initialized definitions, e.g.
-
-        /// @brief Something.
-        uint32_t LOG_timestamp_prefix_format = 0;
-
-    or
-
-        /// @brief Something.
-        extern uint32_t LOG_timestamp_prefix_format;
-
+    Handles both plain declarations and extern + initialized definitions.
     """
     pattern = re.compile(
         rf"(?P<docstring>(///.*\n)+)"  # one or more /// lines
@@ -164,9 +154,13 @@ def parse_str_config_array(c_code: str) -> list[StrConfigVariable]:
                 # Note: Subtract one to account for null terminator.
                 max_length = int(raw_max) - 1
             except ValueError:
-                # Hack: Fetch it from a dict we store here.  # noqa: FIX004
-                # If not registered in that dict, returns None.
-                max_length = _DEFAULT_STR_MAX_LENGTHS.get(name)
+                max_length = None
+
+        if max_length is None:
+            # Hack: Fetch it from a dict we store here.  # noqa: FIX004
+            # If not registered in that dict, returns None.
+            max_length = _DEFAULT_STR_MAX_LENGTHS.get(name)
+
         results.append(StrConfigVariable(variable_name=name, max_length=max_length))
     return results
 
@@ -223,15 +217,10 @@ if __name__ == "__main__":
     config_path = fw_repo_path / "firmware/Core/Src/config/configuration.c"
     src = config_path.read_text(encoding="utf-8")
 
-    # Optionally collect sibling C files for richer docstring lookup
-    extra = ""
-    if config_path.parent.is_dir():
-        for f in config_path.parent.glob("**/*.c"):
-            if f != config_path:
-                with contextlib.suppress(FileNotFoundError):
-                    extra += f.read_text(encoding="utf-8") + "\n"
+    all_c_files = fw_repo_path.glob("firmware/Core/Src/**/*.c")
+    all_c_files_contents = "\n\n".join(f.read_text(encoding="utf-8") for f in all_c_files)
 
-    int_vars, str_vars = parse_config_variables(src, extra)
+    int_vars, str_vars = parse_config_variables(src, all_c_files_contents)
 
     output = {
         "int_config_variables": [dataclasses.asdict(v) for v in int_vars],
