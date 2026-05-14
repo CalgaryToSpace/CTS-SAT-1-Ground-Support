@@ -103,7 +103,7 @@
     {
       "variable_name": "TCMD_require_unique_tssent",
       "default_value": 0,
-      "docstring": "@brief Boolean. Whether to require the `@tssent` suffix tag for all telecommands.\n@details 1 = require, 0 = don't require"
+      "docstring": "@brief Boolean. Whether to enforce unique `@tssent` suffix tag value for all telecommands.\n@details When enabled, telecommands with duplicate `@tssent` suffixes will be rejected.\n@note When enabled, telecommands without a `@tssent` value will be rejected.\n@note 1 = require, 0 = don't require"
     },
     {
       "variable_name": "TCMD_max_consecutive_burst_execution_size",
