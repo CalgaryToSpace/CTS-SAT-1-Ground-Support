@@ -138,7 +138,7 @@
     {
       "variable_name": "GNSS_write_cmd_mode_data_to_firehose_file",
       "default_value": 1,
-      "docstring": "@brief Boolean. Whether to store command-mode GNSS data to the firehose file.\n@details If GNSS firehose storage mode is enabled, and the send_cmd_get_response\nfunction is used, this config variable controls whether the command-mode\nresponse data is written to the firehose file."
+      "docstring": "@brief Boolean. Whether to store command-mode GNSS data to the firehose file.\n@details If GNSS firehose storage mode is enabled, and the GNSS_send_cmd_get_response\nfunction is used (e.g., via the `gnss_send_cmd_ascii` command), this config variable\ncontrols whether the command-mode response data is written to the firehose file."
     }
   ],
   "str_config_variables": [
