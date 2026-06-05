@@ -513,7 +513,7 @@
     "description": null,
     "number_of_args": 3,
     "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
-    "full_docstring": "@brief Telecommand: List all the files and directories within a given directory\n@param args_str\n- Arg 0: Root Directory path as string\n- Arg 1: (Offset) Number of entries to skip at the beginning\n- Arg 2: (Count) Number entries to display",
+    "full_docstring": "@brief Telecommand: List all the files and directories within a given directory via log messages.\n@note The directory contents are each listed in separate log messages. Logging must be enabled separately.\n@note On success, the telecommand response is empty. Recommended to use `fs_list_directory_json` generally.\n@param args_str\n- Arg 0: Root Directory path as string\n- Arg 1: (Offset) Number of entries to skip at the beginning\n- Arg 2: (Count) Number entries to display",
     "argument_descriptions": [
       "Root Directory path as string",
       "(Offset) Number of entries to skip at the beginning",
