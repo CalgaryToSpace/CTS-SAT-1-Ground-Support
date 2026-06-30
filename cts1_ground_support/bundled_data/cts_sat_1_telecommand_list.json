@@ -1390,7 +1390,7 @@
     "description": null,
     "number_of_args": 1,
     "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
-    "full_docstring": "@brief Telecommand: Download a specific file from the ADCS SD card by its index\n@param args_str\n- Arg 0: The index of the file to download\n@return 0 on success, >0 on error",
+    "full_docstring": "@brief Telecommand: Download a specific file from the ADCS SD card by its index\n@param args_str\n- Arg 0: The index of the file to download\n@return 0 on success, >0 on error\n@details This command writes a file to LittleFS in the `/ADCS/` directory, identified\nby the file's checksum. For example, \"ADCS/log_%x.TLM\", \"ADCS/img_%x.jpg\", \"ADCS/img_%x.bmp\",\nwhere %x is the file's CRC16 checksum in lowercase hex.",
     "argument_descriptions": [
       "The index of the file to download"
     ]
@@ -1401,9 +1401,9 @@
     "description": null,
     "number_of_args": 1,
     "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
-    "full_docstring": "@brief Telecommand: Download a specific file from the ADCS SD card by its checksum.\n@param args_str\n- Arg 0: The CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)\n@return 0 on success, >0 on error",
+    "full_docstring": "@brief Telecommand: Download a specific file from the ADCS SD card by its checksum.\n@param args_str\n- Arg 0: The CRC16 checksum of the file as two hex bytes in order (e.g. pass checksum 0x07f1 as \"07 f1\")\n@return 0 on success, >0 on error\n@example For checksum 0x07f1, the telecommand is: CTS1+adcs_download_sd_file_by_checksum(07 f1)\nand the file will be downloaded as: `ADCS/log_07f1.TLM` (if it's a telemetry file).\n@details This command writes a file to LittleFS in the `/ADCS/` directory, identified\nby the file's checksum. For example, \"ADCS/log_%x.TLM\", \"ADCS/img_%x.jpg\", \"ADCS/img_%x.bmp\",\nwhere %x is the file's CRC16 checksum in lowercase hex.",
     "argument_descriptions": [
-      "The CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)"
+      "The CRC16 checksum of the file as two hex bytes in order (e.g. pass checksum 0x07f1 as \"07 f1\")"
     ]
   },
   {
@@ -1578,9 +1578,9 @@
     "description": null,
     "number_of_args": 1,
     "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
-    "full_docstring": "@brief Telecommand: Instruct the ADCS to erase a file from the SD card\n@param args_str\n- Arg 0: CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)\n@return 0 on success, >0 on error",
+    "full_docstring": "@brief Telecommand: Instruct the ADCS to erase a file from the SD card\n@param args_str\n- Arg 0: CRC16 checksum of the file as two hex bytes in order (e.g. pass checksum 0x07f1 as \"07 f1\")\n@return 0 on success, >0 on error",
     "argument_descriptions": [
-      "CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)"
+      "CRC16 checksum of the file as two hex bytes in order (e.g. pass checksum 0x07f1 as \"07 f1\")"
     ]
   },
   {
@@ -1611,9 +1611,9 @@
     "description": null,
     "number_of_args": 3,
     "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
-    "full_docstring": "@brief Telecommand: Instruct the ADCS to convert an SD card file to JPG format\n@param args_str\n- Arg 0: The CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)\n- Arg 1: Quality factor (1 is the most compressed and lossy, 100 is the least)\n- Arg 2: White balance\n@return 0 on success, >0 on error",
+    "full_docstring": "@brief Telecommand: Instruct the ADCS to convert an SD card file to JPG format\n@param args_str\n- Arg 0: The CRC16 checksum of the file as two hex bytes in order (e.g. pass checksum 0x07f1 as \"07 f1\")\n- Arg 1: Quality factor (1 is the most compressed and lossy, 100 is the least)\n- Arg 2: White balance\n@return 0 on success, >0 on error",
     "argument_descriptions": [
-      "The CRC16 checksum of the file as two hex bytes in order (e.g. \"07 ff\" becomes 0x07ff)",
+      "The CRC16 checksum of the file as two hex bytes in order (e.g. pass checksum 0x07f1 as \"07 f1\")",
       "Quality factor (1 is the most compressed and lossy, 100 is the least)",
       "White balance"
     ]
@@ -2540,7 +2540,7 @@
     "description": null,
     "number_of_args": 0,
     "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
-    "full_docstring": "@brief Set up the camera by powering on and changing the baudrate to 230400.\n@param args_str\n@param response_output_buf Buffer to write the response to\n@param response_output_buf_len Max length of the buffer\n@return 0 if successful, >0 if an error occurred",
+    "full_docstring": "@brief Set up the camera by powering on EPS channel and changing the baudrate to 230400.\n@param args_str\n@param response_output_buf Buffer to write the response to\n@param response_output_buf_len Max length of the buffer\n@return 0 if successful, >0 if an error occurred",
     "argument_descriptions": []
   },
   {
@@ -2569,7 +2569,7 @@
     "description": null,
     "number_of_args": 2,
     "readiness_level": "TCMD_READINESS_LEVEL_FOR_OPERATION",
-    "full_docstring": "@brief Send telecommand to camera and capture an image. RUN CAM_SETUP BEFORE THIS EVERY TIME!\n@param args_str\n- Arg 0: filename to save the image to (max 32 chars)\n- Arg 1: lighting mode (single character: d,m,n,s)\n@param response_output_buf Buffer to write the response to\n@param response_output_buf_len Max length of the buffer\n@return 0 if successful, >0 if an error occurred",
+    "full_docstring": "@brief Send telecommand to camera and capture an image. RUN CAM_SETUP BEFORE THIS EVERY TIME!\n@note This command disables the EPS power channel afterwards.\n@param args_str\n- Arg 0: filename to save the image to (max 32 chars)\n- Arg 1: lighting mode (single character: d,m,n,s)\n@param response_output_buf Buffer to write the response to\n@param response_output_buf_len Max length of the buffer\n@return 0 if successful, >0 if an error occurred\n@note Lighting modes:\nd - daylight ambient light\nm - medium ambient light\nn - night ambient light\ns - solar sail contrast and light",
     "argument_descriptions": [
       "filename to save the image to (max 32 chars)",
       "lighting mode (single character: d,m,n,s)"
