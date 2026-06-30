@@ -43,7 +43,7 @@ dev = [
   "hatchling",
   "ruff==0.12.7",
   "coverage", # For CI.
-  "pyright", # For type checking.
+  "pyright==1.1.409", # For type checking.
   "sortedcontainers-stubs==2.4.2" # Type checking for sortedcontainers.
 ]
 
