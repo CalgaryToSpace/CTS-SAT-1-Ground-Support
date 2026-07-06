@@ -681,9 +681,7 @@ def _generate_batch_send_modal() -> dbc.Modal:
             dbc.ModalHeader(dbc.ModalTitle("Batch Send Raw Commands")),
             dbc.ModalBody(
                 [
-                    dbc.Label(
-                        "Enter one raw command per line:", html_for="batch-send-textarea"
-                    ),
+                    dbc.Label("Enter one raw command per line:", html_for="batch-send-textarea"),
                     dbc.Textarea(
                         id="batch-send-textarea",
                         style={
@@ -732,7 +730,7 @@ def _generate_batch_send_modal() -> dbc.Modal:
     State("batch-send-modal", "is_open"),
     prevent_initial_call=True,
 )
-def toggle_batch_send_modal(_n_open: int, _n_close: int, is_open: bool) -> bool:
+def toggle_batch_send_modal(_n_open: int, _n_close: int, is_open: bool) -> bool:  # noqa: FBT001
     """Toggle the batch-send modal open/closed."""
     return not is_open
 
@@ -748,13 +746,17 @@ def toggle_batch_send_modal(_n_open: int, _n_close: int, is_open: bool) -> bool:
     State("batch-send-rate-input", "value"),
     prevent_initial_call=True,
 )
-def handle_batch_send(
+def handle_batch_send(  # noqa: PLR0911
     _n_start: int,
     _n_stop: int,
     _n_intervals: int,
     textarea_value: str | None,
     rate_sec: float | None,
-) -> tuple[bool, "dash._callback.NoUpdate | int", str]:
+) -> tuple[
+    "bool | dash._callback.NoUpdate",
+    "int | dash._callback.NoUpdate",
+    "str | dash._callback.NoUpdate",
+]:
     """Start, stop, or advance the batch-send-raw-commands tool.
 
     Runs off a single `dcc.Interval`. Which branch runs depends on what triggered the callback:
@@ -773,7 +775,9 @@ def handle_batch_send(
 
         app_store.batch_send_queue = lines
 
-        rate_sec = rate_sec if (rate_sec is not None and rate_sec > 0) else DEFAULT_BATCH_SEND_RATE_SEC
+        rate_sec = (
+            rate_sec if (rate_sec is not None and rate_sec > 0) else DEFAULT_BATCH_SEND_RATE_SEC
+        )
         interval_ms = max(round(rate_sec * 1000), 1)
 
         logger.info(f"Starting batch send of {len(lines)} commands at {rate_sec} sec/command.")
