@@ -671,6 +671,142 @@ def _generate_left_pane_send_commands(
     ]
 
 
+DEFAULT_BATCH_SEND_RATE_SEC = 1.0
+
+
+def _generate_batch_send_modal() -> dbc.Modal:
+    """Generate the modal used to paste and send a batch of raw commands, one line at a time."""
+    return dbc.Modal(
+        [
+            dbc.ModalHeader(dbc.ModalTitle("Batch Send Raw Commands")),
+            dbc.ModalBody(
+                [
+                    dbc.Label("Enter one raw command per line:", html_for="batch-send-textarea"),
+                    dbc.Textarea(
+                        id="batch-send-textarea",
+                        style={
+                            "height": "300px",
+                            "fontFamily": "monospace",
+                        },
+                        className="mb-3",
+                    ),
+                    dbc.FormFloating(
+                        [
+                            dbc.Input(
+                                id="batch-send-rate-input",
+                                type="number",
+                                min=0.1,
+                                step=0.1,
+                                value=DEFAULT_BATCH_SEND_RATE_SEC,
+                            ),
+                            dbc.Label(
+                                "Rate (seconds per command)",
+                                html_for="batch-send-rate-input",
+                            ),
+                        ],
+                        className="mb-3",
+                    ),
+                    html.Div(id="batch-send-status", className="text-muted"),
+                ]
+            ),
+            dbc.ModalFooter(
+                [
+                    dbc.Button("Stop", id="batch-send-stop-button", color="danger"),
+                    dbc.Button("Start Sending", id="batch-send-start-button", color="success"),
+                    dbc.Button("Close", id="batch-send-close-button", color="secondary"),
+                ]
+            ),
+        ],
+        id="batch-send-modal",
+        size="lg",
+        is_open=False,
+    )
+
+
+@callback(
+    Output("batch-send-modal", "is_open"),
+    Input("open-batch-send-modal-button", "n_clicks"),
+    Input("batch-send-close-button", "n_clicks"),
+    State("batch-send-modal", "is_open"),
+    prevent_initial_call=True,
+)
+def toggle_batch_send_modal(_n_open: int, _n_close: int, is_open: bool) -> bool:  # noqa: FBT001
+    """Toggle the batch-send modal open/closed."""
+    return not is_open
+
+
+@callback(
+    Output("batch-send-interval-component", "disabled"),
+    Output("batch-send-interval-component", "interval"),
+    Output("batch-send-status", "children"),
+    Input("batch-send-start-button", "n_clicks"),
+    Input("batch-send-stop-button", "n_clicks"),
+    Input("batch-send-interval-component", "n_intervals"),
+    State("batch-send-textarea", "value"),
+    State("batch-send-rate-input", "value"),
+    prevent_initial_call=True,
+)
+def handle_batch_send(  # noqa: PLR0911
+    _n_start: int,
+    _n_stop: int,
+    _n_intervals: int,
+    textarea_value: str | None,
+    rate_sec: float | None,
+) -> tuple[
+    "bool | dash._callback.NoUpdate",
+    "int | dash._callback.NoUpdate",
+    "str | dash._callback.NoUpdate",
+]:
+    """Start, stop, or advance the batch-send-raw-commands tool.
+
+    Runs off a single `dcc.Interval`. Which branch runs depends on what triggered the callback:
+    the "Start" button (load the queue and start the timer), the "Stop" button (clear the queue
+    and stop the timer), or an interval tick (send the next queued line).
+    """
+    triggered_id = dash.ctx.triggered_id
+
+    if triggered_id == "batch-send-start-button":
+        lines = [line for line in (textarea_value or "").splitlines() if line.strip() != ""]
+        if not lines:
+            return True, dash.no_update, "No commands entered. Nothing to send."
+
+        if app_store.uart_port_name == UART_PORT_NAME_DISCONNECTED:
+            return True, dash.no_update, "Can't start batch send when disconnected."
+
+        app_store.batch_send_queue = lines
+
+        rate_sec = (
+            rate_sec if (rate_sec is not None and rate_sec > 0) else DEFAULT_BATCH_SEND_RATE_SEC
+        )
+        interval_ms = max(round(rate_sec * 1000), 1)
+
+        logger.info(f"Starting batch send of {len(lines)} commands at {rate_sec} sec/command.")
+        return False, interval_ms, f"Sending... {len(lines)} command(s) remaining."
+
+    if triggered_id == "batch-send-stop-button":
+        logger.info(f"Batch send stopped by user, {len(app_store.batch_send_queue)} remaining.")
+        app_store.batch_send_queue = []
+        return True, dash.no_update, "Stopped."
+
+    if triggered_id == "batch-send-interval-component":
+        if app_store.uart_port_name == UART_PORT_NAME_DISCONNECTED:
+            app_store.batch_send_queue = []
+            return True, dash.no_update, "Disconnected. Batch send stopped."
+
+        if not app_store.batch_send_queue:
+            return True, dash.no_update, "Finished sending all commands."
+
+        next_line = app_store.batch_send_queue.pop(0)
+        send_command_to_device(next_line)
+
+        remaining = len(app_store.batch_send_queue)
+        if remaining == 0:
+            return True, dash.no_update, "Finished sending all commands."
+        return False, dash.no_update, f"Sending... {remaining} command(s) remaining."
+
+    return dash.no_update, dash.no_update, dash.no_update
+
+
 def _generate_left_pane_tools() -> list:
     """Generate the left pane of the GUI, to be put inside a Col."""
     return [
@@ -690,6 +826,21 @@ def _generate_left_pane_tools() -> list:
             className="m-1 px-3",
             style={"width": "auto"},
             color="info",
+        ),
+        dbc.Button(
+            "Batch Send Raw Commands",
+            id="open-batch-send-modal-button",
+            n_clicks=0,
+            className="m-1 px-3",
+            style={"width": "auto"},
+            color="info",
+        ),
+        _generate_batch_send_modal(),
+        dcc.Interval(
+            id="batch-send-interval-component",
+            interval=round(DEFAULT_BATCH_SEND_RATE_SEC * 1000),
+            n_intervals=0,
+            disabled=True,
         ),
     ]
 

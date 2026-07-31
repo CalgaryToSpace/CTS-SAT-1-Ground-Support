@@ -29,6 +29,9 @@ class AppStore:
 
     uart_log_refresh_rate_ms: int = 500
 
+    # Queue of raw command lines waiting to be sent by the batch-send tool, one at a time.
+    batch_send_queue: list[str] = field(default_factory=list)
+
     def append_to_rxtx_log(self: "AppStore", entry: RxTxLogEntry) -> None:
         """Append a new entry to the RX/TX log."""
         self.rxtx_log[self.rxtx_log.keys()[-1] + 1] = entry
